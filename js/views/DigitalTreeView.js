@@ -1,11 +1,18 @@
 /**
- * Vista D3 para el Árbol Digital
- * Renderiza el árbol y anima la búsqueda
+ * Vista D3 — Árbol Digital de Búsqueda
+ * ──────────────────────────────────────────────────────────
+ * Cada nodo muestra:   LETRA
+ *                      bits (ej: 00001)
+ *
+ * Cada arista muestra: 0 (izquierda) ó 1 (derecha)
+ *   en un pequeño círculo sobre la línea
+ * ──────────────────────────────────────────────────────────
  */
 class DigitalTreeView {
     constructor(containerId = 'digitalTreeContainer') {
-        this.container = document.getElementById(containerId);
+        this.container   = document.getElementById(containerId);
         this.d3container = d3.select(`#${containerId}`);
+        this.svg         = null;
     }
 
     render(model) {
@@ -15,158 +22,161 @@ class DigitalTreeView {
         const hierarchy = model.getHierarchy();
         if (!hierarchy) return;
 
-        // Calcular dimensiones basadas en la profundidad del árbol
-        const depth = this._getDepth(hierarchy);
+        const depth     = this._getDepth(hierarchy);
         const nodeCount = this._countNodes(hierarchy);
-        
-        // Ancho mínimo para mostrar el árbol completamente
-        const minWidth = Math.max(800, nodeCount * 80);
-        const height = Math.max(500, (depth + 1) * 120);
+
+        const dx       = 130;
+        const dy       = 130;
+        const minWidth = Math.max(900, nodeCount * dx);
+        const height   = Math.max(500, (depth + 2) * dy);
 
         const svg = this.d3container.append('svg')
-            .attr('width', minWidth)
+            .attr('width',  minWidth)
             .attr('height', height)
-            .style('border', '1px solid #e0e0e0')
-            .style('border-radius', '6px')
-            .style('display', 'block');
+            .style('border',        '1px solid #e0e0e0')
+            .style('border-radius', '8px')
+            .style('display',       'block')
+            .style('background',    '#fafbfc');
 
         const g = svg.append('g')
-            .attr('transform', `translate(${minWidth / 2}, 30)`);
+            .attr('transform', `translate(${minWidth / 2}, 50)`);
 
-        // D3 tree layout con mejor espaciado
-        const dx = 100; // espacio horizontal entre nodos
-        const dy = 120; // espacio vertical entre niveles
+        // ── Layout D3 ────────────────────────────────────────
         const tree = d3.tree().nodeSize([dx, dy]);
-        const root = d3.hierarchy(hierarchy);
+        const root = d3.hierarchy(hierarchy, d => d.children || []);
         tree(root);
 
-        // Draw links
-        g.append('g')
-            .attr('fill', 'none')
-            .attr('stroke', '#bbb')
-            .attr('stroke-width', 1.5)
-            .selectAll('path')
-            .data(root.links())
-            .join('path')
-            .attr('d', d3.linkVertical().x(d => d.x).y(d => d.y));
+        // ── Aristas + etiquetas 0/1 ──────────────────────────
+        const linkGen = d3.linkVertical().x(d => d.x).y(d => d.y);
 
-        // Draw nodes
+        root.links().forEach(link => {
+            // Línea de arista
+            g.append('path')
+                .attr('d',            linkGen(link))
+                .attr('fill',         'none')
+                .attr('stroke',       '#9aa')
+                .attr('stroke-width', 1.8);
+
+            // Etiqueta 0/1 en el punto medio de la arista
+            const mx         = (link.source.x + link.target.x) / 2;
+            const my         = (link.source.y + link.target.y) / 2;
+            const edgeLabel  = link.target.data.edgeLabel;
+
+            if (edgeLabel !== null && edgeLabel !== undefined) {
+                const color = edgeLabel === 0 ? '#1565c0' : '#b71c1c';
+
+                // Círculo de fondo
+                g.append('circle')
+                    .attr('cx',           mx)
+                    .attr('cy',           my)
+                    .attr('r',            11)
+                    .attr('fill',         '#fff')
+                    .attr('stroke',       color)
+                    .attr('stroke-width', 1.8);
+
+                // Texto 0 ó 1
+                g.append('text')
+                    .attr('x',            mx)
+                    .attr('y',            my + 4)
+                    .attr('text-anchor',  'middle')
+                    .style('font-size',   '12px')
+                    .style('font-weight', 'bold')
+                    .style('font-family', 'monospace')
+                    .style('fill',        color)
+                    .text(edgeLabel);
+            }
+        });
+
+        // ── Nodos ────────────────────────────────────────────
         const node = g.append('g')
             .selectAll('g')
             .data(root.descendants())
             .join('g')
             .attr('transform', d => `translate(${d.x},${d.y})`)
-            .attr('class', d => d.data.isLeaf ? 'dt-node dt-leaf' : 'dt-node');
+            .attr('class', 'dt-node');
 
+        // Círculo del nodo
         node.append('circle')
-            .attr('r', d => d.data.isLeaf ? 14 : 10)
+            .attr('r',    26)
             .attr('class', 'dt-circle')
             .attr('data-char', d => d.data.char || '');
 
+        // Letra grande centrada
         node.append('text')
             .attr('text-anchor', 'middle')
-            .attr('dy', 4)
-            .attr('class', 'dt-text')
-            .text(d => d.data.isLeaf ? (d.data.char || '•') : '•')
-            .style('font-size', d => d.data.isLeaf ? '10px' : '8px')
-            .style('font-weight', 'bold')
-            .style('font-family', 'sans-serif');
+            .attr('dy',          '-3px')
+            .attr('class',       'dt-label-char')
+            .text(d => d.data.char || '');
 
-        // Guardar referencia para animación
+        // Bits pequeños debajo de la letra
+        node.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('dy',          '12px')
+            .attr('class',       'dt-label-bits')
+            .text(d => d.data.bitsStr || '');
+
+        // Guardar para animación
         this.svg = svg;
-        this.g = g;
+        this.g   = g;
     }
 
-    /**
-     * Anima el recorrido de una búsqueda
-     * Resalta los nodos en orden del path
-     */
-    highlightPath(path) {
-        if (!this.svg) return;
-        this.svg.selectAll('circle.dt-circle').classed('dt-highlight', false);
-        // Resaltar solo el último nodo (destino)
-        if (path && path.length > 0) {
-            const last = path[path.length - 1];
-            if (last.node && last.node.isLeaf) {
-                const char = last.node.char;
-                this.svg.selectAll(`circle[data-char="${char}"]`).classed('dt-highlight', true);
-            } else {
-                // Si no hay hoja, resaltar círculos en orden
-                this.svg.selectAll('circle.dt-circle').classed('dt-highlight', false);
-            }
-        }
-    }
-
-    /**
-     * Anima paso a paso el recorrido del árbol
-     */
+    /** Anima el recorrido paso a paso */
     animatePath(path, callback) {
         if (!this.svg || !path || path.length === 0) {
             callback && callback();
             return;
         }
-        
+
         const self = this;
         let stepIndex = 0;
 
-        // Limpiar estados previos
         self.svg.selectAll('circle.dt-circle')
             .classed('dt-visiting', false)
             .classed('dt-highlight', false);
 
         const step = () => {
             if (stepIndex >= path.length) {
-                // Resaltar el nodo final
-                if (path[path.length - 1].node && path[path.length - 1].node.isLeaf) {
-                    self.svg.selectAll('circle.dt-leaf').classed('dt-highlight', true);
+                // Marcar nodo encontrado
+                const last = path[path.length - 1];
+                if (last && last.node) {
+                    self.svg.selectAll('circle.dt-circle').each(function(d) {
+                        if (d && d.data && d.data._ref === last.node) {
+                            d3.select(this)
+                                .classed('dt-visiting',  false)
+                                .classed('dt-highlight', true);
+                        }
+                    });
                 }
                 callback && callback();
                 return;
             }
 
             const p = path[stepIndex];
-            
-            // Resaltar el nodo actual
-            if (p.node) {
-                // Marcar como visitado
+            if (p && p.node) {
                 self.svg.selectAll('circle.dt-circle').each(function(d) {
-                    if (d.data._ref === p.node) {
+                    if (d && d.data && d.data._ref === p.node) {
                         d3.select(this).classed('dt-visiting', true);
                     }
                 });
             }
-            
+
             stepIndex++;
-            setTimeout(step, 500); // 500ms por step
+            setTimeout(step, 650);
         };
-        
+
         step();
     }
 
-    /**
-     * Calcula la profundidad máxima del árbol
-     */
-    _getDepth(node, depth = 0) {
-        if (!node) return depth;
-        if (!node.children || node.children.length === 0) return depth;
-        return Math.max(
-            this._getDepth(node.children[0], depth + 1),
-            this._getDepth(node.children[1], depth + 1)
-        );
+    _getDepth(node, d = 0) {
+        if (!node || !node.children || !node.children.length) return d;
+        return Math.max(...node.children.map(c => this._getDepth(c, d + 1)));
     }
 
-    /**
-     * Cuenta el total de nodos en el árbol
-     */
     _countNodes(node) {
         if (!node) return 0;
-        let count = 1;
-        if (node.children) {
-            for (const child of node.children) {
-                count += this._countNodes(child);
-            }
-        }
-        return count;
+        let n = 1;
+        if (node.children) for (const c of node.children) n += this._countNodes(c);
+        return n;
     }
 }
 

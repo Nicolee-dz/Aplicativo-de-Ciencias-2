@@ -302,6 +302,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Eliminar carácter árbol digital
+    const digitalDeleteBtn = document.getElementById('digitalDeleteBtn');
+    if (digitalDeleteBtn) {
+        digitalDeleteBtn.addEventListener('click', () => {
+            const char = document.getElementById('digitalDeleteChar').value;
+            if (!char || char.trim().length !== 1) {
+                showNotification('Ingresa un único carácter válido', 'error');
+                return;
+            }
+            const success = digitalModel.deleteChar(char);
+            if (success) {
+                digitalView.render(digitalModel);
+                // Actualizar tabla
+                const tbody = document.getElementById('digitalCharTableBody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    for (const charInfo of digitalModel.insertedChars) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><strong>${charInfo.char}</strong></td>
+                            <td>${charInfo.pos}</td>
+                            <td><code>${charInfo.bits.join('')}</code></td>
+                        `;
+                        tbody.appendChild(row);
+                    }
+                }
+                document.getElementById('digitalDeleteChar').value = '';
+                showNotification(`Carácter '${char.toUpperCase()}' eliminado`, 'success');
+            } else {
+                showNotification(`Carácter '${char.toUpperCase()}' no existe en el árbol`, 'error');
+            }
+        });
+    }
+
     // Eventos para TRIES
     const triesInsertBtn = document.getElementById('triesInsertBtn');
     const triesSearchBtn = document.getElementById('triesSearchBtn');
@@ -339,8 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+            const stats = arrayModel.getStats();
+            const fecha = new Date().toLocaleString('es-CO');
 
-            // Título
+            // ── Título ──────────────────────────────────────
             doc.setFontSize(18);
             doc.setTextColor(75, 108, 183);
             doc.text('Ciencias de la Computación 2', 105, 20, { align: 'center' });
@@ -349,64 +385,66 @@ document.addEventListener('DOMContentLoaded', () => {
             doc.setTextColor(40, 40, 40);
             doc.text('Arreglo Guardado', 105, 30, { align: 'center' });
 
-            // Fecha
             doc.setFontSize(10);
             doc.setTextColor(100, 100, 100);
-            const fecha = new Date().toLocaleString('es-CO');
             doc.text(`Fecha: ${fecha}`, 105, 38, { align: 'center' });
 
-            // Línea separadora
             doc.setDrawColor(75, 108, 183);
             doc.setLineWidth(0.5);
             doc.line(20, 42, 190, 42);
 
-            // Metadata del arreglo
-            const stats = arrayModel.getStats();
+            // ── Estadísticas ────────────────────────────────
             doc.setFontSize(11);
             doc.setTextColor(40, 40, 40);
             doc.text(`Total de elementos: ${stats.length}`, 20, 52);
             doc.text(`Mínimo: ${stats.min}   |   Máximo: ${stats.max}   |   Suma: ${stats.sum}`, 20, 60);
 
-            // Línea
             doc.setDrawColor(200, 200, 200);
             doc.line(20, 64, 190, 64);
 
-            // Etiqueta especial para recuperación (oculta visualmente pero legible)
-            doc.setFontSize(8);
-            doc.setTextColor(240, 240, 240); // casi blanco, no visible
-            doc.text('ARREGLO_DATA:' + JSON.stringify(arr), 20, 68);
-
-            // Tabla del arreglo (visible)
+            // ── Contenido visible ───────────────────────────
             doc.setFontSize(11);
             doc.setTextColor(40, 40, 40);
-            doc.text('Contenido del arreglo:', 20, 76);
+            doc.text('Contenido del arreglo:', 20, 72);
 
             const colsPerRow = 10;
-            let y = 84;
+            let y = 80;
             let rowText = '';
-
             for (let i = 0; i < arr.length; i++) {
-                rowText += `[${i + 1}]: ${arr[i]}    `;
+                rowText += `[${i + 1}]:${arr[i]}  `;
                 if ((i + 1) % colsPerRow === 0 || i === arr.length - 1) {
                     doc.setFontSize(10);
                     doc.setTextColor(60, 60, 60);
                     doc.text(rowText.trim(), 20, y);
                     y += 8;
                     rowText = '';
-                    if (y > 270) {
-                        doc.addPage();
-                        y = 20;
-                    }
+                    if (y > 260) { doc.addPage(); y = 20; }
                 }
             }
 
-            // Pie de página
+            // ── Marcador de datos (texto negro pequeño al pie) ──
+            // Se escribe en color muy claro pero LEGIBLE para PDF.js
+            const dataMarker = `##ARREGLO_DATA##${JSON.stringify(arr)}##END##`;
+            doc.setFontSize(6);
+            doc.setTextColor(200, 200, 200);
+
+            // Dividir en líneas de máx 180 chars para que quepan
+            const chunkSize = 180;
+            let dataY = y + 10;
+            for (let i = 0; i < dataMarker.length; i += chunkSize) {
+                const chunk = dataMarker.substring(i, i + chunkSize);
+                doc.text(chunk, 15, dataY);
+                dataY += 5;
+                if (dataY > 285) { doc.addPage(); dataY = 15; }
+            }
+
+            // ── Pie de página ───────────────────────────────
             const pageCount = doc.internal.getNumberOfPages();
             for (let p = 1; p <= pageCount; p++) {
                 doc.setPage(p);
                 doc.setFontSize(9);
                 doc.setTextColor(150, 150, 150);
-                doc.text('Aplicativo - Ciencias de la Computación 2', 105, 290, { align: 'center' });
+                doc.text('Aplicativo - Ciencias de la Computación 2', 105, 292, { align: 'center' });
             }
 
             doc.save(`arreglo_${Date.now()}.pdf`);
@@ -433,33 +471,59 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification('Leyendo PDF...', 'warning');
 
             try {
-                // Configurar worker de PDF.js
                 pdfjsLib.GlobalWorkerOptions.workerSrc =
                     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
+                // Extraer TODO el texto de todas las páginas
                 let fullText = '';
                 for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    const page = await pdf.getPage(pageNum);
+                    const page    = await pdf.getPage(pageNum);
                     const content = await page.getTextContent();
-                    const pageText = content.items.map(item => item.str).join(' ');
-                    fullText += pageText + ' ';
+                    // Unir sin espacios para evitar que el marcador quede partido
+                    const pageText = content.items.map(item => item.str).join('');
+                    fullText += pageText;
                 }
 
-                // Buscar el marcador de datos
-                const marker = 'ARREGLO_DATA:';
-                const idx = fullText.indexOf(marker);
-                if (idx === -1) {
-                    showNotification('No se encontraron datos de arreglo en el PDF', 'error');
+                console.log('Texto extraído del PDF (primeros 500 chars):', fullText.substring(0, 500));
+
+                // Buscar marcador ##ARREGLO_DATA## ... ##END##
+                const startMarker = '##ARREGLO_DATA##';
+                const endMarker   = '##END##';
+                const startIdx    = fullText.indexOf(startMarker);
+                const endIdx      = fullText.indexOf(endMarker);
+
+                if (startIdx === -1 || endIdx === -1) {
+                    // Intentar con el marcador viejo por compatibilidad
+                    const oldMarker  = 'ARREGLO_DATA:';
+                    const oldIdx     = fullText.indexOf(oldMarker);
+                    if (oldIdx !== -1) {
+                        const jsonStart = oldIdx + oldMarker.length;
+                        const jsonEnd   = fullText.indexOf(']', jsonStart) + 1;
+                        const jsonStr   = fullText.substring(jsonStart, jsonEnd).replace(/\s+/g, '');
+                        try {
+                            const recovered = JSON.parse(jsonStr);
+                            if (Array.isArray(recovered) && recovered.length > 0) {
+                                arrayModel.setArray(recovered);
+                                arrayView.displayArray(arrayModel.getArray());
+                                arrayView.updateStats(arrayModel.getStats());
+                                searchController.reset();
+                                showNotification(`Arreglo recuperado: ${recovered.length} elementos ✓`, 'success');
+                                return;
+                            }
+                        } catch(e) { /* sigue */ }
+                    }
+                    showNotification('No se encontraron datos en el PDF. ¿Es un PDF guardado con esta app?', 'error');
                     return;
                 }
 
-                // Extraer el JSON
-                const jsonStart = idx + marker.length;
-                const jsonEnd = fullText.indexOf(']', jsonStart) + 1;
-                const jsonStr = fullText.substring(jsonStart, jsonEnd).replace(/\s+/g, '');
+                // Extraer el JSON entre los marcadores
+                const jsonStr = fullText
+                    .substring(startIdx + startMarker.length, endIdx)
+                    .replace(/\s+/g, '');
+
                 const recoveredArr = JSON.parse(jsonStr);
 
                 if (!Array.isArray(recoveredArr) || recoveredArr.length === 0) {
@@ -467,17 +531,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // Cargar arreglo recuperado
                 arrayModel.setArray(recoveredArr);
                 arrayView.displayArray(arrayModel.getArray());
                 arrayView.updateStats(arrayModel.getStats());
                 searchController.reset();
-
                 showNotification(`Arreglo recuperado: ${recoveredArr.length} elementos ✓`, 'success');
 
             } catch (err) {
                 console.error('Error leyendo PDF:', err);
-                showNotification('Error al leer el PDF', 'error');
+                showNotification(`Error al leer el PDF: ${err.message}`, 'error');
             }
         });
     }

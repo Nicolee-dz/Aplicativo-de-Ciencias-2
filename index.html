@@ -211,14 +211,19 @@
                                 <h2>Árbol Digital - Configuración</h2>
                                 <div class="input-group">
                                     <label for="digitalWord">Clave a insertar:</label>
-                                    <input type="text" id="digitalWord" class="form-control" placeholder="Ej: HOLA">
-                                    <small class="text-muted">Se divide en caracteres. Cada car. → posición (A=1) → 5 bits → árbol.</small>
+                                    <input type="text" id="digitalWord" class="form-control" >
                                 </div>
                                 <button class="btn btn-primary w-100 mt-2" id="digitalInsertBtn">Insertar</button>
                                 <hr>
                                 <div class="input-group">
+                                    <label for="digitalDeleteChar">Carácter a eliminar:</label>
+                                    <input type="text" id="digitalDeleteChar" class="form-control">
+                                </div>
+                                <button class="btn-delete-char w-100 mt-2" id="digitalDeleteBtn">Eliminar Carácter</button>
+                                <hr>
+                                <div class="input-group">
                                     <label for="digitalChar">Carácter a buscar:</label>
-                                    <input type="text" id="digitalChar" class="form-control" placeholder="Ej: A" maxlength="1">
+                                    <input type="text" id="digitalChar" class="form-control">
                                 </div>
                                 <button class="search-btn w-100 mt-2" id="digitalSearchBtn">Buscar Carácter</button>
                                 <button class="reset-btn w-100 mt-2" id="digitalResetBtn">Reiniciar Árbol</button>
@@ -262,14 +267,13 @@
                                 <h2>TRIES - Configuración</h2>
                                 <div class="input-group">
                                     <label for="triesWord">Clave a insertar:</label>
-                                    <input type="text" id="triesWord" class="form-control" placeholder="Ej: HOLA">
-                                    <small class="text-muted">Se divide en caracteres. Cada car. → posición (A=1) → 5 bits → árbol.</small>
+                                    <input type="text" id="triesWord" class="form-control">
                                 </div>
                                 <button class="btn btn-primary w-100 mt-2" id="triesInsertBtn">Insertar</button>
                                 <hr>
                                 <div class="input-group">
                                     <label for="triesChar">Carácter a buscar:</label>
-                                    <input type="text" id="triesChar" class="form-control" placeholder="Ej: A" maxlength="1">
+                                    <input type="text" id="triesChar" class="form-control">
                                 </div>
                                 <button class="search-btn w-100 mt-2" id="triesSearchBtn">Buscar Carácter</button>
                                 <button class="reset-btn w-100 mt-2" id="triesResetBtn">Reiniciar Árbol</button>
