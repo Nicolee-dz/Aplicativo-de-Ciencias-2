@@ -1,11 +1,10 @@
 /**
- * Controlador para Residuos Múltiples (estructura similar a Tries)
- * Usa el modelo que se le pase; la visualización del árbol está pendiente.
+ * Controlador para Residuos Múltiples
  */
 class ResiduosMultipleController {
     constructor(model, view) {
-        this.model = model;
-        this.view = view;
+        this.model       = model;
+        this.view        = view;
         this.isSearching = false;
     }
 
@@ -13,19 +12,67 @@ class ResiduosMultipleController {
         console.log('ResiduosMultipleController inicializado');
     }
 
+    changeN(n) {
+        const nVal = Math.min(5, Math.max(2, parseInt(n)));
+        this.model.setN(nVal);
+        this.view.render(this.model);
+        this._hideSearchInfo();
+        this._clearCharTable();
+        this._updateNInfo(nVal);
+        showNotification(`n=${nVal} → M=${Math.pow(2, nVal)} hijos por nodo`, 'success');
+    }
+
+    _updateNInfo(n) {
+        const M    = Math.pow(2, n);
+        const info = document.getElementById('residueNInfo');
+        if (!info) return;
+        // Generar todos los códigos posibles para ese M
+        const codes = [];
+        for (let i = 0; i < M; i++) {
+            codes.push(i.toString(2).padStart(n, '0'));
+        }
+        // Calcular grupos del primer ejemplo (A=1=00001)
+        const exampleGroups = [];
+        for (let i = 0; i < 5; i += n) {
+            exampleGroups.push('00001'.slice(i, Math.min(i + n, 5)));
+        }
+        info.innerHTML = `
+            <strong>n = ${n}</strong> → 
+            <strong>M = 2<sup>${n}</sup> = ${M}</strong> hijos por nodo 
+            | <strong>${Math.ceil(5/n)} niveles</strong><br>
+            <small>Códigos posibles: ${codes.join(', ')}
+            ${5 % n !== 0 ? ` | Último nivel: ${(5 % n)} bit(s) suelto(s)` : ''}</small>
+        `;
+    }
+
     insertWord(word) {
         if (!word || typeof word !== 'string' || word.trim().length === 0) {
             showNotification('Ingresa una palabra válida', 'error');
             return;
         }
-        const success = this.model && this.model.insertWord ? this.model.insertWord(word) : true;
+        const success = this.model.insertWord(word);
         if (!success) {
             showNotification('No se pudo insertar la palabra', 'error');
             return;
         }
-        this.view && this.view.render(this.model);
+        this.view.render(this.model);
         this._updateCharTable();
         showNotification(`Palabra "${word.toUpperCase()}" insertada`, 'success');
+    }
+
+    deleteChar(char) {
+        if (!char || char.trim().length !== 1) {
+            showNotification('Ingresa un único carácter válido', 'error');
+            return;
+        }
+        const success = this.model.deleteChar(char);
+        if (!success) {
+            showNotification(`Carácter '${char.toUpperCase()}' no existe en el árbol`, 'error');
+            return;
+        }
+        this.view.render(this.model);
+        this._updateCharTable();
+        showNotification(`Carácter '${char.toUpperCase()}' eliminado`, 'success');
     }
 
     searchChar(char) {
@@ -33,18 +80,21 @@ class ResiduosMultipleController {
             showNotification('Búsqueda en progreso', 'warning');
             return;
         }
-        if (!char || typeof char !== 'string' || char.trim().length !== 1) {
+        if (!char || char.trim().length !== 1) {
             showNotification('Ingresa un único carácter válido', 'error');
             return;
         }
 
-        const result = this.model && this.model.search ? this.model.search(char) : { found: false, path: [] };
+        const result = this.model.search(char);
+        if (!result) {
+            showNotification('Búsqueda inválida', 'error');
+            return;
+        }
 
         this.isSearching = true;
         this._showSearchInfo(char, result);
 
-        // Animar paso a paso (vacío por ahora)
-        this.view && this.view.animatePath(result.path, () => {
+        this.view.animatePath(result.path, () => {
             if (result.found) {
                 showNotification(`Carácter '${char.toUpperCase()}' encontrado`, 'success');
                 this._updateSearchInfo(char, result, true);
@@ -57,8 +107,8 @@ class ResiduosMultipleController {
     }
 
     reset() {
-        this.model && this.model.reset && this.model.reset();
-        this.view && this.view.render(this.model);
+        this.model.reset();
+        this.view.render(this.model);
         this._hideSearchInfo();
         this._clearCharTable();
         this.isSearching = false;
@@ -71,18 +121,28 @@ class ResiduosMultipleController {
         info.style.display = 'block';
         const desc = document.getElementById('residueStepDescription');
         if (!desc) return;
+        const groupsStr = result.groups
+            .map((g, i) => `Nivel ${i + 1}: grupo <code>"${g}"</code>`)
+            .join('<br>');
         desc.innerHTML = `
             <strong>Buscando:</strong> ${char.toUpperCase()}<br>
-            <strong>Estado:</strong> búsqueda iniciada
+            <strong>Posición:</strong> ${result.pos} → binario: <code>${this.model.posToBits(result.pos)}</code><br>
+            <strong>Grupos (n=${this.model.n}):</strong><br>${groupsStr}<br>
+            <strong>Resultado:</strong> ${result.found ? 'Encontrado ✓' : 'Buscando...'}
         `;
     }
 
     _updateSearchInfo(char, result, found) {
         const desc = document.getElementById('residueStepDescription');
         if (!desc) return;
+        const groupsStr = result.groups
+            .map((g, i) => `Nivel ${i + 1}: grupo <code>"${g}"</code>`)
+            .join('<br>');
         desc.innerHTML = `
             <strong>Buscando:</strong> ${char.toUpperCase()}<br>
-            <strong>Resultado:</strong> ${found ? 'Nodo encontrado ✓' : 'Nodo no encontrado ✗'}
+            <strong>Posición:</strong> ${result.pos} → binario: <code>${this.model.posToBits(result.pos)}</code><br>
+            <strong>Grupos (n=${this.model.n}):</strong><br>${groupsStr}<br>
+            <strong>Resultado:</strong> ${found ? 'Hoja encontrada ✓' : 'Hoja no encontrada ✗'}
         `;
     }
 
@@ -92,25 +152,23 @@ class ResiduosMultipleController {
     }
 
     _updateCharTable() {
-        const tbody = document.getElementById('residueCharTableBody');
+        const tbody = document.getElementById('residueKeyTableBody');
         if (!tbody) return;
         tbody.innerHTML = '';
-        // Si el modelo provee insertedChars mantén la misma lógica
-        const chars = (this.model && this.model.insertedChars) ? this.model.insertedChars : [];
-        for (const charInfo of chars) {
+        for (const entry of this.model.insertedChars) {
             const row = document.createElement('tr');
-            const rep = (charInfo.repr || (charInfo.bits ? charInfo.bits.join('') : ''));
             row.innerHTML = `
-                <td><strong>${charInfo.char}</strong></td>
-                <td>${charInfo.pos || ''}</td>
-                <td><code>${rep}</code></td>
+                <td><strong>${entry.char}</strong></td>
+                <td>${entry.pos}</td>
+                <td><code>${this.model.posToBits(entry.pos)}</code></td>
+                <td><code>${entry.groups.join(', ')}</code></td>
             `;
             tbody.appendChild(row);
         }
     }
 
     _clearCharTable() {
-        const tbody = document.getElementById('residueCharTableBody');
+        const tbody = document.getElementById('residueKeyTableBody');
         if (tbody) tbody.innerHTML = '';
     }
 }

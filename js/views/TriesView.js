@@ -1,11 +1,18 @@
 /**
- * Vista D3 para TRIES (idéntica a DigitalTreeView)
- * Renderiza el árbol y anima la búsqueda
+ * Vista D3 — TRIES
+ * Layout manual con espacio proporcional al número de HOJAS de cada subárbol:
+ *   - Hijo bit=0 recibe fracción izquierda proporcional a sus hojas
+ *   - Hijo bit=1 recibe fracción derecha proporcional a sus hojas
+ *   - Las hojas aparecen en su profundidad REAL (no se alargan ramas)
+ *   - Nodos internos: círculo vacío
+ *   - Hojas: círculo con LETRA + bits
+ *   - Aristas: etiqueta 0 (azul) / 1 (rojo)
  */
 class TriesView {
     constructor(containerId = 'triesTreeContainer') {
-        this.container = document.getElementById(containerId);
+        this.container   = document.getElementById(containerId);
         this.d3container = d3.select(`#${containerId}`);
+        this.svg         = null;
     }
 
     render(model) {
@@ -15,139 +22,199 @@ class TriesView {
         const hierarchy = model.getHierarchy();
         if (!hierarchy) return;
 
-        // Calcular dimensiones basadas en la profundidad del árbol
-        const depth = this._getDepth(hierarchy);
-        const nodeCount = this._countNodes(hierarchy);
-        
-        // Ancho mínimo para mostrar el árbol completamente
-        const minWidth = Math.max(800, nodeCount * 80);
-        const height = Math.max(500, (depth + 1) * 120);
+        const maxDepth = this._getDepth(hierarchy);
 
+        // ── Dimensiones ──────────────────────────────────────
+        const leafCount = this._countLeaves(hierarchy);
+        const nodeSpacing = 80; // espacio mínimo por hoja
+        const W       = Math.max(700, leafCount * nodeSpacing);
+        const levelH  = 90;
+        const height  = Math.max(350, (maxDepth + 2) * levelH);
+        const marginX = 50;
+        const startY  = 45;
+
+        // ── Calcular posiciones ──────────────────────────────
+        // El espacio se reparte proporcional al número de hojas
+        // de cada subárbol. Así los nodos no se amontonan.
+        const nodes = [];
+        const links = [];
+
+        const assignPos = (node, xMin, xMax, depth, parentPos, edgeLabel) => {
+            if (!node) return;
+
+            const x   = (xMin + xMax) / 2;
+            const y   = startY + depth * levelH;
+            const pos = { x, y, node, edgeLabel, depth };
+            nodes.push(pos);
+
+            if (parentPos) {
+                links.push({ source: parentPos, target: pos, edgeLabel });
+            }
+
+            if (!node.children || node.children.length === 0) return;
+
+            // Contar hojas de cada hijo para distribuir espacio
+            const leftChild  = node.children.find(c => c.edgeLabel === 0) || null;
+            const rightChild = node.children.find(c => c.edgeLabel === 1) || null;
+
+            const leftLeaves  = leftChild  ? this._countLeaves(leftChild)  : 0;
+            const rightLeaves = rightChild ? this._countLeaves(rightChild) : 0;
+            const totalLeaves = leftLeaves + rightLeaves || 1;
+
+            const totalWidth = xMax - xMin;
+            const leftWidth  = totalLeaves > 0 ? (totalWidth * leftLeaves  / totalLeaves) : totalWidth / 2;
+            const rightWidth = totalLeaves > 0 ? (totalWidth * rightLeaves / totalLeaves) : totalWidth / 2;
+
+            if (leftChild) {
+                assignPos(leftChild,  xMin,            xMin + leftWidth,  depth + 1, pos, 0);
+            }
+            if (rightChild) {
+                assignPos(rightChild, xMin + leftWidth, xMax,             depth + 1, pos, 1);
+            }
+        };
+
+        assignPos(hierarchy, marginX, W - marginX, 0, null, null);
+
+        // ── SVG ──────────────────────────────────────────────
         const svg = this.d3container.append('svg')
-            .attr('width', minWidth)
+            .attr('width',  W)
             .attr('height', height)
-            .style('border', '1px solid #e0e0e0')
-            .style('border-radius', '6px')
-            .style('display', 'block');
+            .style('border',        '1px solid #e0e0e0')
+            .style('border-radius', '8px')
+            .style('display',       'block')
+            .style('background',    '#fafbfc');
 
-        const g = svg.append('g')
-            .attr('transform', `translate(${minWidth / 2}, 30)`);
+        const g = svg.append('g');
 
-        // D3 tree layout con mejor espaciado
-        const dx = 100; // espacio horizontal entre nodos
-        const dy = 120; // espacio vertical entre niveles
-        const tree = d3.tree().nodeSize([dx, dy]);
-        const root = d3.hierarchy(hierarchy);
-        tree(root);
+        // ── Aristas ──────────────────────────────────────────
+        links.forEach(link => {
+            g.append('line')
+                .attr('x1',           link.source.x)
+                .attr('y1',           link.source.y)
+                .attr('x2',           link.target.x)
+                .attr('y2',           link.target.y)
+                .attr('stroke',       '#9aa')
+                .attr('stroke-width', 1.8);
 
-        // Draw links
-        g.append('g')
-            .attr('fill', 'none')
-            .attr('stroke', '#bbb')
-            .attr('stroke-width', 1.5)
-            .selectAll('path')
-            .data(root.links())
-            .join('path')
-            .attr('d', d3.linkVertical().x(d => d.x).y(d => d.y));
+            const mx    = (link.source.x + link.target.x) / 2;
+            const my    = (link.source.y + link.target.y) / 2;
+            const color = link.edgeLabel === 0 ? '#1565c0' : '#b71c1c';
 
-        // Draw nodes
-        const node = g.append('g')
-            .selectAll('g')
-            .data(root.descendants())
+            g.append('circle')
+                .attr('cx',           mx)
+                .attr('cy',           my)
+                .attr('r',            10)
+                .attr('fill',         '#fff')
+                .attr('stroke',       color)
+                .attr('stroke-width', 1.6);
+
+            g.append('text')
+                .attr('x',            mx)
+                .attr('y',            my + 4)
+                .attr('text-anchor',  'middle')
+                .style('font-size',   '11px')
+                .style('font-weight', 'bold')
+                .style('font-family', 'monospace')
+                .style('fill',        color)
+                .text(link.edgeLabel);
+        });
+
+        // ── Nodos ────────────────────────────────────────────
+        const nodeG = g.append('g').selectAll('g')
+            .data(nodes)
             .join('g')
             .attr('transform', d => `translate(${d.x},${d.y})`)
-            .attr('class', d => d.data.isLeaf ? 'dt-node dt-leaf' : 'dt-node');
+            .attr('class', 'dt-node');
 
-        node.append('circle')
-            .attr('r', d => d.data.isLeaf ? 14 : 10)
-            .attr('class', 'dt-circle')
-            .attr('data-char', d => d.data.char || '');
+        nodeG.append('circle')
+            .attr('r',         22)
+            .attr('class',     'dt-circle')
+            .attr('data-char', d => d.node.char || '');
 
-        node.append('text')
+        // Letra — solo hojas
+        nodeG.append('text')
             .attr('text-anchor', 'middle')
-            .attr('dy', 4)
-            .attr('class', 'dt-text')
-            .text(d => d.data.isLeaf ? (d.data.char || '•') : '•')
-            .style('font-size', d => d.data.isLeaf ? '10px' : '8px')
-            .style('font-weight', 'bold')
-            .style('font-family', 'sans-serif');
+            .attr('dy',          '-2px')
+            .attr('class',       'dt-label-char')
+            .text(d => d.node.isLeaf ? (d.node.char || '') : '');
 
-        // Guardar referencia para animación
-        this.svg = svg;
-        this.g = g;
+        // Bits — solo hojas
+        nodeG.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('dy',          '11px')
+            .attr('class',       'dt-label-bits')
+            .text(d => d.node.isLeaf ? (d.node.bitsStr || '') : '');
+
+        // Guardar para animación
+        this.svg    = svg;
+        this.g      = g;
+        this._nodes = nodes;
     }
 
-    /**
-     * Anima paso a paso el recorrido del árbol
-     */
+    /** Anima el recorrido paso a paso */
     animatePath(path, callback) {
         if (!this.svg || !path || path.length === 0) {
             callback && callback();
             return;
         }
-        
+
         const self = this;
         let stepIndex = 0;
 
-        // Limpiar estados previos
         self.svg.selectAll('circle.dt-circle')
             .classed('dt-visiting', false)
             .classed('dt-highlight', false);
 
         const step = () => {
             if (stepIndex >= path.length) {
-                // Resaltar el nodo final
-                if (path[path.length - 1].node && path[path.length - 1].node.isLeaf) {
-                    self.svg.selectAll('circle.dt-leaf').classed('dt-highlight', true);
+                const last = path[path.length - 1];
+                if (last && last.node) {
+                    self.svg.selectAll('circle.dt-circle').each(function(d) {
+                        if (d && d.node && d.node._ref === last.node) {
+                            d3.select(this)
+                                .classed('dt-visiting',  false)
+                                .classed('dt-highlight', true);
+                        }
+                    });
                 }
                 callback && callback();
                 return;
             }
 
             const p = path[stepIndex];
-            
-            // Resaltar el nodo actual
-            if (p.node) {
-                // Marcar como visitado
+            if (p && p.node) {
                 self.svg.selectAll('circle.dt-circle').each(function(d) {
-                    if (d.data._ref === p.node) {
+                    if (d && d.node && d.node._ref === p.node) {
                         d3.select(this).classed('dt-visiting', true);
                     }
                 });
             }
-            
+
             stepIndex++;
-            setTimeout(step, 500); // 500ms por step
+            setTimeout(step, 650);
         };
-        
+
         step();
     }
 
-    /**
-     * Calcula la profundidad máxima del árbol
-     */
-    _getDepth(node, depth = 0) {
-        if (!node) return depth;
-        if (!node.children || node.children.length === 0) return depth;
-        return Math.max(
-            this._getDepth(node.children[0], depth + 1),
-            this._getDepth(node.children[1], depth + 1)
-        );
+    /** Cuenta solo las hojas reales del subárbol */
+    _countLeaves(node) {
+        if (!node) return 0;
+        if (!node.children || node.children.length === 0) return 1;
+        return node.children.reduce((sum, c) => sum + this._countLeaves(c), 0);
     }
 
-    /**
-     * Cuenta el total de nodos en el árbol
-     */
+    _getDepth(node, d = 0) {
+        if (!node || !node.children || !node.children.length) return d;
+        return Math.max(...node.children.map(c => this._getDepth(c, d + 1)));
+    }
+
     _countNodes(node) {
         if (!node) return 0;
-        let count = 1;
-        if (node.children) {
-            for (const child of node.children) {
-                count += this._countNodes(child);
-            }
-        }
-        return count;
+        let n = 1;
+        if (node.children) for (const c of node.children) n += this._countNodes(c);
+        return n;
     }
 }
 
-window.TriesView = TriesView;
+window.TriesView = TriesView;   

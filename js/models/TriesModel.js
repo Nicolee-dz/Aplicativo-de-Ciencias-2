@@ -1,60 +1,49 @@
 /**
- * Modelo TRIES (mismo que Árbol Digital)
- * - Acepta palabras (string)
- * - Convierte cada carácter a posición en alfabeto (A=1..Z=26)
- * - Convierte posición a 5 bits
- * - Construye un trie binario basado esos bits
+ * Modelo TRIES
+ * Regla de inserción:
+ *   - Se recorre bit a bit la representación del carácter
+ *   - Si el nodo actual está LIBRE (no tiene hijos en esa dirección
+ *     y no es hoja), se inserta AHÍ como hoja (ruta corta)
+ *   - Si el nodo ya es hoja (otro carácter), se "baja" ese carácter
+ *     un nivel y se continúa discriminando
+ *   - Las hojas quedan en su profundidad natural, no siempre en nivel 5
  */
 class TriesNode {
     constructor() {
-        this.left = null;  // bit 0
-        this.right = null; // bit 1
-        this.char = null;  // carácter almacenado en esta hoja
+        this.left   = null;
+        this.right  = null;
+        this.char   = null;
         this.isLeaf = false;
     }
 }
 
 class TriesModel {
     constructor() {
-        this.root = new TriesNode();
-        this.bitLength = 5; // suficiente para A-Z (1-26)
-        this.words = []; // palabras insertadas (para ref)
-        this.insertedChars = []; // caracteres únicos insertados con su info
-    }
-
-    reset() {
-        this.root = new TriesNode();
-        this.words = [];
+        this.root          = new TriesNode();
+        this.bitLength     = 5;
+        this.words         = [];
         this.insertedChars = [];
     }
 
-    /**
-     * Convierte un carácter a su posición en el alfabeto
-     * A/a -> 1, B/b -> 2 ... Z/z -> 26
-     */
+    reset() {
+        this.root          = new TriesNode();
+        this.words         = [];
+        this.insertedChars = [];
+    }
+
     charToPos(ch) {
         if (!ch || typeof ch !== 'string') return 0;
         const c = ch.trim().toUpperCase();
-        if (c.length === 0) return 0;
+        if (!c.length) return 0;
         const code = c.charCodeAt(0);
-        if (code >= 65 && code <= 90) {
-            return code - 64; // A(65) - 64 = 1
-        }
-        return 0;
+        return (code >= 65 && code <= 90) ? code - 64 : 0;
     }
 
-    /**
-     * Convierte posición a carácter (1->A, 2->B, ..., 26->Z)
-     */
     posToChar(pos) {
         if (!pos || isNaN(pos) || pos <= 0) return '?';
-        const p = Math.min(26, Math.max(1, Math.round(pos)));
-        return String.fromCharCode(64 + p); // 64+1=65=A
+        return String.fromCharCode(64 + Math.min(26, Math.max(1, Math.round(pos))));
     }
 
-    /**
-     * Convierte posición a array de 5 bits (MSB a LSB)
-     */
     posToBits(pos) {
         const bits = [];
         for (let i = this.bitLength - 1; i >= 0; i--) {
@@ -64,86 +53,139 @@ class TriesModel {
     }
 
     /**
-     * Inserta una palabra en el árbol
-     * Cada carácter se convierte a posición y luego a bits
+     * Inserta un carácter usando la regla de TRIES real:
+     * - En cada nivel se examina el bit correspondiente
+     * - Si el hijo en esa dirección no existe → insertar aquí como hoja
+     * - Si el hijo existe y es hoja → hay colisión: bajar ambos un nivel
+     * - Si el hijo existe y es nodo interno → seguir bajando
      */
+    _insertChar(char) {
+        const pos = this.charToPos(char);
+        if (pos === 0) return false;
+        const key  = char.trim().toUpperCase();
+        if (this.insertedChars.some(c => c.char === key)) return false;
+
+        const bits = this.posToBits(pos);
+        this.insertedChars.push({ char: key, pos, bits });
+        this._insertNode(this.root, key, bits, 0);
+        return true;
+    }
+
+    _insertNode(node, char, bits, depth) {
+        if (depth >= this.bitLength) return; // seguridad
+
+        const bit = bits[depth];
+
+        if (bit === 0) {
+            if (!node.left) {
+                // Espacio libre → insertar hoja aquí
+                node.left         = new TriesNode();
+                node.left.isLeaf  = true;
+                node.left.char    = char;
+            } else if (node.left.isLeaf) {
+                // Colisión con otra hoja → convertir en nodo interno y bajar ambos
+                const existing     = node.left;
+                const existingBits = this.posToBits(this.charToPos(existing.char));
+
+                node.left         = new TriesNode(); // nuevo nodo interno
+                // Re-insertar el que ya estaba
+                this._insertNode(node.left, existing.char, existingBits, depth + 1);
+                // Insertar el nuevo
+                this._insertNode(node.left, char, bits, depth + 1);
+            } else {
+                // Nodo interno → seguir bajando
+                this._insertNode(node.left, char, bits, depth + 1);
+            }
+        } else {
+            if (!node.right) {
+                node.right         = new TriesNode();
+                node.right.isLeaf  = true;
+                node.right.char    = char;
+            } else if (node.right.isLeaf) {
+                const existing     = node.right;
+                const existingBits = this.posToBits(this.charToPos(existing.char));
+
+                node.right         = new TriesNode();
+                this._insertNode(node.right, existing.char, existingBits, depth + 1);
+                this._insertNode(node.right, char, bits, depth + 1);
+            } else {
+                this._insertNode(node.right, char, bits, depth + 1);
+            }
+        }
+    }
+
     insertWord(word) {
         if (!word || typeof word !== 'string') return false;
         const w = word.trim().toUpperCase();
-        if (w.length === 0) return false;
-
-        // Recorrer cada carácter de la palabra
-        for (const char of w) {
-            const pos = this.charToPos(char);
-            if (pos === 0) continue; // ignorar caracteres inválidos
-            const bits = this.posToBits(pos);
-            let node = this.root;
-            // Navegar por el árbol siguiendo los bits
-            for (const bit of bits) {
-                if (bit === 0) {
-                    if (!node.left) node.left = new TriesNode();
-                    node = node.left;
-                } else {
-                    if (!node.right) node.right = new TriesNode();
-                    node = node.right;
-                }
-            }
-            // Marcar como hoja con el carácter
-            node.isLeaf = true;
-            node.char = char;
-
-            // Registrar carácter único (si no existe ya)
-            if (!this.insertedChars.some(c => c.char === char)) {
-                this.insertedChars.push({ char, pos, bits });
-            }
-        }
+        if (!w.length) return false;
+        for (const char of w) this._insertChar(char);
         this.words.push(w);
         return true;
     }
 
     /**
-     * Busca un carácter y retorna la ruta (path) con info de cada paso
+     * Elimina un carácter reconstruyendo el árbol desde cero.
+     */
+    deleteChar(char) {
+        const key = char.trim().toUpperCase();
+        if (!this.insertedChars.some(c => c.char === key)) return false;
+
+        const remaining = this.insertedChars
+            .filter(c => c.char !== key)
+            .map(c => c.char);
+
+        this.root          = new TriesNode();
+        this.insertedChars = [];
+        this.words         = [];
+
+        for (const ch of remaining) this._insertChar(ch);
+        return true;
+    }
+
+    /**
+     * Busca un carácter y retorna el path recorrido.
      */
     search(char) {
         const pos = this.charToPos(char);
         if (pos === 0) return null;
         const bits = this.posToBits(pos);
         const path = [];
-        let node = this.root;
-        path.push({ node, bit: null, depth: 0, char: null });
+        let node   = this.root;
+
+        path.push({ node, bit: null, depth: 0 });
 
         for (let i = 0; i < bits.length; i++) {
             const bit = bits[i];
-            node = bit === 0 ? node?.left : node?.right;
-            path.push({ node, bit, depth: i + 1, char: node?.char || null });
-            if (!node) break;
+            const next = bit === 0 ? node?.left : node?.right;
+            path.push({ node: next, bit, depth: i + 1 });
+            if (!next) break;
+            // Si encontramos una hoja, terminar aquí
+            if (next.isLeaf) break;
+            node = next;
         }
-        return { char, pos, bits, path, found: path[path.length - 1]?.node?.isLeaf || false };
+
+        const last  = path[path.length - 1];
+        const found = !!(last?.node?.isLeaf && last?.node?.char === char.trim().toUpperCase());
+        return { char: char.toUpperCase(), pos, bits, path, found };
     }
 
     /**
-     * Retorna la estructura jerárquica del árbol para D3
+     * Jerarquía para la Vista.
      */
     getHierarchy() {
-        const convert = (node, depth = 0) => {
+        const convert = (node, edgeLabel = null) => {
             if (!node) return null;
             const children = [];
-            if (node.left) children.push(convert(node.left, depth + 1));
-            if (node.right) children.push(convert(node.right, depth + 1));
-            
-            // Si es nodo hoja con carácter, calcular bits
-            let bits = null;
-            if (node.isLeaf && node.char) {
-                const pos = this.charToPos(node.char);
-                bits = this.posToBits(pos).join('');
-            }
-            
+            if (node.left)  children.push(convert(node.left,  0));
+            if (node.right) children.push(convert(node.right, 1));
+
             return {
-                char: node.char || '',
-                isLeaf: node.isLeaf,
-                bits: bits,
-                children: children.length ? children : null,
-                _ref: node
+                char:      node.char || '',
+                isLeaf:    node.isLeaf,
+                bitsStr:   node.isLeaf ? this.posToBits(this.charToPos(node.char)).join('') : '',
+                edgeLabel: edgeLabel,
+                children:  children.length ? children : null,
+                _ref:      node
             };
         };
         return convert(this.root);
