@@ -196,6 +196,58 @@ button:hover {
     display: none;
 }
 
+/* ── Botones de Acciones Rápidas ── */
+.btn-save-array {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    width: 100%;
+}
+.btn-save-array:hover {
+    background-color: #1e8449;
+}
+
+.btn-recover-array {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    width: 100%;
+}
+.btn-recover-array:hover {
+    background-color: #ca6f1e;
+}
+
+.btn-print-array {
+    background-color: #7f8c8d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    width: 100%;
+}
+.btn-print-array:hover {
+    background-color: #616a6b;
+}
+
 .button-group {
     display: flex;
     gap: 10px;

@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Mostrando contenedor:', container.id);
         [menuPrincipal, submenuBusquedas, appContainer].forEach(c => {
             if (c) {
-                c.style.display = (c === container) 
-                    ? (c === appContainer ? 'block' : 'flex') 
+                c.style.display = (c === container)
+                    ? (c === appContainer ? 'block' : 'flex')
                     : 'none';
             }
         });
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Ocultar/mostrar secciones según pestaña
+    // Ocultar/mostrar secciones según pestaña activa
     const dataConfig = document.getElementById('data-config-section');
     const arrayVisual = document.getElementById('array-visual-section');
     const dataManagement = document.getElementById('data-management-section');
@@ -263,22 +263,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dataManagement) dataManagement.style.display = display;
     }
 
+    // Mostrar solo si el tab activo es secuencial o binaria
     document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
         tab.addEventListener('shown.bs.tab', (event) => {
             const targetId = event.target.getAttribute('data-bs-target');
-            if (targetId === '#hash' || targetId === '#digital') {
-                toggleDataSections(false);
-            } else {
-                toggleDataSections(true);
-            }
+            const show = targetId === '#sequential' || targetId === '#binary';
+            toggleDataSections(show);
         });
     });
 
+    // Estado inicial según tab activo
     const activeTab = document.querySelector('.nav-link.active');
-    if (activeTab && (activeTab.getAttribute('data-bs-target') === '#hash' || activeTab.getAttribute('data-bs-target') === '#digital')) {
-        toggleDataSections(false);
-    } else {
-        toggleDataSections(true);
+    if (activeTab) {
+        const activeTarget = activeTab.getAttribute('data-bs-target');
+        toggleDataSections(activeTarget === '#sequential' || activeTarget === '#binary');
     }
 
     // Eventos para Árbol Digital
@@ -292,14 +290,12 @@ document.addEventListener('DOMContentLoaded', () => {
             digitalController.insertWord(word);
         });
     }
-
     if (digitalSearchBtn) {
         digitalSearchBtn.addEventListener('click', () => {
             const char = document.getElementById('digitalChar').value;
             digitalController.searchChar(char);
         });
     }
-
     if (digitalResetBtn) {
         digitalResetBtn.addEventListener('click', () => {
             digitalController.reset();
@@ -317,17 +313,245 @@ document.addEventListener('DOMContentLoaded', () => {
             triesController.insertWord(word);
         });
     }
-
     if (triesSearchBtn) {
         triesSearchBtn.addEventListener('click', () => {
             const char = document.getElementById('triesChar').value;
             triesController.searchChar(char);
         });
     }
-
     if (triesResetBtn) {
         triesResetBtn.addEventListener('click', () => {
             triesController.reset();
+        });
+    }
+
+    // ══════════════════════════════════════════
+    // GUARDAR ARREGLO EN PDF
+    // ══════════════════════════════════════════
+    const saveArrayBtn = document.getElementById('saveArrayBtn');
+    if (saveArrayBtn) {
+        saveArrayBtn.addEventListener('click', () => {
+            const arr = arrayModel.getArray();
+            if (arr.length === 0) {
+                showNotification('No hay arreglo para guardar', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Título
+            doc.setFontSize(18);
+            doc.setTextColor(75, 108, 183);
+            doc.text('Ciencias de la Computación 2', 105, 20, { align: 'center' });
+
+            doc.setFontSize(14);
+            doc.setTextColor(40, 40, 40);
+            doc.text('Arreglo Guardado', 105, 30, { align: 'center' });
+
+            // Fecha
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            const fecha = new Date().toLocaleString('es-CO');
+            doc.text(`Fecha: ${fecha}`, 105, 38, { align: 'center' });
+
+            // Línea separadora
+            doc.setDrawColor(75, 108, 183);
+            doc.setLineWidth(0.5);
+            doc.line(20, 42, 190, 42);
+
+            // Metadata del arreglo
+            const stats = arrayModel.getStats();
+            doc.setFontSize(11);
+            doc.setTextColor(40, 40, 40);
+            doc.text(`Total de elementos: ${stats.length}`, 20, 52);
+            doc.text(`Mínimo: ${stats.min}   |   Máximo: ${stats.max}   |   Suma: ${stats.sum}`, 20, 60);
+
+            // Línea
+            doc.setDrawColor(200, 200, 200);
+            doc.line(20, 64, 190, 64);
+
+            // Etiqueta especial para recuperación (oculta visualmente pero legible)
+            doc.setFontSize(8);
+            doc.setTextColor(240, 240, 240); // casi blanco, no visible
+            doc.text('ARREGLO_DATA:' + JSON.stringify(arr), 20, 68);
+
+            // Tabla del arreglo (visible)
+            doc.setFontSize(11);
+            doc.setTextColor(40, 40, 40);
+            doc.text('Contenido del arreglo:', 20, 76);
+
+            const colsPerRow = 10;
+            let y = 84;
+            let rowText = '';
+
+            for (let i = 0; i < arr.length; i++) {
+                rowText += `[${i + 1}]: ${arr[i]}    `;
+                if ((i + 1) % colsPerRow === 0 || i === arr.length - 1) {
+                    doc.setFontSize(10);
+                    doc.setTextColor(60, 60, 60);
+                    doc.text(rowText.trim(), 20, y);
+                    y += 8;
+                    rowText = '';
+                    if (y > 270) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                }
+            }
+
+            // Pie de página
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let p = 1; p <= pageCount; p++) {
+                doc.setPage(p);
+                doc.setFontSize(9);
+                doc.setTextColor(150, 150, 150);
+                doc.text('Aplicativo - Ciencias de la Computación 2', 105, 290, { align: 'center' });
+            }
+
+            doc.save(`arreglo_${Date.now()}.pdf`);
+            showNotification('Arreglo guardado como PDF ✓', 'success');
+        });
+    }
+
+    // ══════════════════════════════════════════
+    // RECUPERAR ARREGLO DESDE PDF
+    // ══════════════════════════════════════════
+    const recoverArrayBtn = document.getElementById('recoverArrayBtn');
+    const pdfFileInput = document.getElementById('pdfFileInput');
+
+    if (recoverArrayBtn && pdfFileInput) {
+        recoverArrayBtn.addEventListener('click', () => {
+            pdfFileInput.value = '';
+            pdfFileInput.click();
+        });
+
+        pdfFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            showNotification('Leyendo PDF...', 'warning');
+
+            try {
+                // Configurar worker de PDF.js
+                pdfjsLib.GlobalWorkerOptions.workerSrc =
+                    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+                let fullText = '';
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const content = await page.getTextContent();
+                    const pageText = content.items.map(item => item.str).join(' ');
+                    fullText += pageText + ' ';
+                }
+
+                // Buscar el marcador de datos
+                const marker = 'ARREGLO_DATA:';
+                const idx = fullText.indexOf(marker);
+                if (idx === -1) {
+                    showNotification('No se encontraron datos de arreglo en el PDF', 'error');
+                    return;
+                }
+
+                // Extraer el JSON
+                const jsonStart = idx + marker.length;
+                const jsonEnd = fullText.indexOf(']', jsonStart) + 1;
+                const jsonStr = fullText.substring(jsonStart, jsonEnd).replace(/\s+/g, '');
+                const recoveredArr = JSON.parse(jsonStr);
+
+                if (!Array.isArray(recoveredArr) || recoveredArr.length === 0) {
+                    showNotification('Datos inválidos en el PDF', 'error');
+                    return;
+                }
+
+                // Cargar arreglo recuperado
+                arrayModel.setArray(recoveredArr);
+                arrayView.displayArray(arrayModel.getArray());
+                arrayView.updateStats(arrayModel.getStats());
+                searchController.reset();
+
+                showNotification(`Arreglo recuperado: ${recoveredArr.length} elementos ✓`, 'success');
+
+            } catch (err) {
+                console.error('Error leyendo PDF:', err);
+                showNotification('Error al leer el PDF', 'error');
+            }
+        });
+    }
+
+    // ══════════════════════════════════════════
+    // IMPRIMIR
+    // ══════════════════════════════════════════
+    const printArrayBtn = document.getElementById('printArrayBtn');
+    if (printArrayBtn) {
+        printArrayBtn.addEventListener('click', () => {
+            const arr = arrayModel.getArray();
+            if (arr.length === 0) {
+                showNotification('No hay arreglo para imprimir', 'error');
+                return;
+            }
+
+            const stats = arrayModel.getStats();
+            const fecha = new Date().toLocaleString('es-CO');
+
+            // Crear ventana de impresión con contenido formateado
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Arreglo - Ciencias de la Computación 2</title>
+                    <style>
+                        body { font-family: 'Segoe UI', sans-serif; padding: 30px; color: #222; }
+                        h1 { color: #4b6cb7; text-align: center; margin-bottom: 4px; }
+                        h2 { text-align: center; color: #555; font-size: 1rem; font-weight: normal; margin-top: 0; }
+                        .fecha { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+                        hr { border: 1px solid #4b6cb7; margin: 16px 0; }
+                        .stats { display: flex; justify-content: space-around; margin: 16px 0; }
+                        .stat { text-align: center; }
+                        .stat-val { font-size: 1.4rem; font-weight: bold; color: #4b6cb7; }
+                        .stat-lbl { font-size: 0.85rem; color: #888; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th { background-color: #4b6cb7; color: white; padding: 8px 12px; text-align: center; }
+                        td { border: 1px solid #ddd; padding: 7px 12px; text-align: center; }
+                        tr:nth-child(even) td { background-color: #f0f4ff; }
+                        .footer { text-align: center; margin-top: 30px; font-size: 0.8rem; color: #aaa; }
+                        @media print { body { padding: 10px; } }
+                    </style>
+                </head>
+                <body>
+                    <h1>Ciencias de la Computación 2</h1>
+                    <h2>Visualización del Arreglo</h2>
+                    <div class="fecha">Fecha: ${fecha}</div>
+                    <hr>
+                    <div class="stats">
+                        <div class="stat"><div class="stat-val">${stats.length}</div><div class="stat-lbl">Elementos</div></div>
+                        <div class="stat"><div class="stat-val">${stats.min}</div><div class="stat-lbl">Mínimo</div></div>
+                        <div class="stat"><div class="stat-val">${stats.max}</div><div class="stat-lbl">Máximo</div></div>
+                        <div class="stat"><div class="stat-val">${stats.sum}</div><div class="stat-lbl">Suma</div></div>
+                    </div>
+                    <hr>
+                    <table>
+                        <thead><tr><th>Posición</th><th>Valor</th></tr></thead>
+                        <tbody>
+                            ${arr.map((v, i) => `<tr><td>${i + 1}</td><td>${v}</td></tr>`).join('')}
+                        </tbody>
+                    </table>
+                    <div class="footer">Aplicativo - Ciencias de la Computación 2</div>
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            window.onafterprint = function() { window.close(); };
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         });
     }
 

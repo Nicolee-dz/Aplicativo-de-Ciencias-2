@@ -64,7 +64,6 @@
                                     <span class="badge bg-success">TRIES</span>
                                     <span class="badge bg-info">Residuos Múltiples</span>
                                     <span class="badge bg-secondary">Árboles de Huffman</span>
-                                    
                                 </div>
                             </div>
                         </div>
@@ -100,44 +99,6 @@
                     transformación de llaves".</p>
             </div>
 
-            <!-- Sección de Configuración de Datos (visible solo en Secuencial/Binaria) -->
-            <div class="section" id="data-config-section">
-                <h2>Configuración de Datos</h2>
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <label for="dataSource">Fuente de datos:</label>
-                            <select id="dataSource" class="form-select">
-                                <option value="random">Generar arreglo aleatorio</option>
-                                <option value="manual">Ingresar arreglo manualmente</option>
-                                <option value="sorted">Generar arreglo ordenado</option>
-                            </select>
-                        </div>
-                        <div class="input-group" id="randomOptions">
-                            <label for="arraySize">Tamaño del arreglo (máx. 100):</label>
-                            <input type="range" id="arraySize" min="5" max="100" value="15" class="form-range">
-                            <div class="d-flex justify-content-between">
-                                <small>5</small>
-                                <span id="sizeValue" class="fw-bold">15 elementos</span>
-                                <small>100</small>
-                            </div>
-                        </div>
-                        <div class="input-group" id="manualOptions" style="display: none;">
-                            <label for="manualArray">Ingresa números únicos separados por comas:</label>
-                            <input type="text" id="manualArray" class="form-control" placeholder="Ej: 5, 12, 8, 25, 3, 17">
-                            <small class="text-muted mt-1">Los duplicados se eliminan.</small>
-                        </div>
-                        <button id="generateBtn" class="btn btn-primary w-100 mt-2">Generar Arreglo</button>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <label>Acciones rápidas</label>
-                            <button class="reset-btn w-100 mt-2" id="resetSearchBtn">Reiniciar Búsqueda</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Pestañas de métodos -->
             <ul class="nav nav-tabs" id="methodTabs" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -160,8 +121,8 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link disabled" id="huffman-tab" data-bs-toggle="tab" data-bs-target="#huffman" type="button" role="tab">Árboles de Huffman</button>
+                </li>
             </ul>
-            
 
             <div class="tab-content" id="methodTabsContent">
                 <!-- Pestaña Secuencial -->
@@ -200,8 +161,6 @@
                         </div>
                     </div>
                 </div>
-
-                
 
                 <!-- Pestaña Hash -->
                 <div class="tab-pane fade" id="hash" role="tabpanel">
@@ -347,6 +306,48 @@
                 </div>
             </div>
 
+            <!-- Sección de Configuración de Datos (visible solo en Secuencial/Binaria) -->
+            <div class="section" id="data-config-section">
+                <h2>Configuración de Datos</h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <label for="dataSource">Fuente de datos:</label>
+                            <select id="dataSource" class="form-select">
+                                <option value="random">Generar arreglo aleatorio</option>
+                                <option value="manual">Ingresar arreglo manualmente</option>
+                                <option value="sorted">Generar arreglo ordenado</option>
+                            </select>
+                        </div>
+                        <div class="input-group" id="randomOptions">
+                            <label for="arraySize">Tamaño del arreglo (máx. 100):</label>
+                            <input type="range" id="arraySize" min="5" max="100" value="15" class="form-range">
+                            <div class="d-flex justify-content-between">
+                                <small>5</small>
+                                <span id="sizeValue" class="fw-bold">15 elementos</span>
+                                <small>100</small>
+                            </div>
+                        </div>
+                        <div class="input-group" id="manualOptions" style="display: none;">
+                            <label for="manualArray">Ingresa números únicos separados por comas:</label>
+                            <input type="text" id="manualArray" class="form-control" placeholder="Ej: 5, 12, 8, 25, 3, 17">
+                            <small class="text-muted mt-1">Los duplicados se eliminan.</small>
+                        </div>
+                        <button id="generateBtn" class="btn btn-primary w-100 mt-2">Generar Arreglo</button>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <label>Acciones rápidas</label>
+                            <button class="reset-btn w-100 mt-2" id="resetSearchBtn">Reiniciar Búsqueda</button>
+                            <button class="btn-save-array w-100 mt-2" id="saveArrayBtn">Guardar Arreglo (PDF)</button>
+                            <button class="btn-recover-array w-100 mt-2" id="recoverArrayBtn">Recuperar Arreglo</button>
+                            <button class="btn-print-array w-100 mt-2" id="printArrayBtn">Imprimir</button>
+                            <!-- Input oculto para subir PDF -->
+                            <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Sección de Visualización del Arreglo (visible solo en Secuencial/Binaria) -->
             <div class="section" id="array-visual-section">
@@ -406,6 +407,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- jsPDF para guardar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- PDF.js para leer/recuperar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/models/ArrayModel.js"></script>
     <script src="js/models/HashModel.js"></script>
