@@ -74,7 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btnInternas.addEventListener('click', () => {
             console.log('Click en Internas');
             showContainer(appContainer);
-            arrayModel.generate('random', 15);
+            // Iniciar con arreglo vacío
+            arrayModel.clear();
             arrayView.displayArray(arrayModel.getArray());
             arrayView.updateStats(arrayModel.getStats());
             hashController.reset();
@@ -103,46 +104,72 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Eventos de generación de datos
-    const generateBtn = document.getElementById('generateBtn');
-    if (generateBtn) {
-        generateBtn.addEventListener('click', () => {
-            const source = document.getElementById('dataSource').value;
-            let sizeOrInput;
-            if (source === 'manual') {
-                sizeOrInput = document.getElementById('manualArray').value;
-            } else {
-                sizeOrInput = parseInt(document.getElementById('arraySize').value);
+    // Elementos del arreglo
+    const arrayDigitsInput = document.getElementById('arrayDigits');
+    const addSingleValue = document.getElementById('addSingleValue');
+    const addSingleBtn = document.getElementById('addSingleBtn');
+
+    // Inserción manual con validación de dígitos
+    if (addSingleBtn && addSingleValue && arrayDigitsInput) {
+        addSingleBtn.addEventListener('click', () => {
+            const val = parseInt(addSingleValue.value);
+            const digits = parseInt(arrayDigitsInput.value) || 3;
+            if (isNaN(val)) {
+                showNotification('Ingresa un valor numérico válido', 'error');
+                return;
             }
-            arrayModel.generate(source, sizeOrInput);
+            if (Math.abs(val).toString().length !== digits) {
+                showNotification(`El valor debe tener exactamente ${digits} dígito(s)`, 'error');
+                return;
+            }
+            if (!arrayModel.addValue(val)) {
+                showNotification('No se pudo agregar (duplicado o límite de 100)', 'error');
+                return;
+            }
+            if (searchController.searchAlgorithm === 'binary') arrayModel.sort();
             arrayView.displayArray(arrayModel.getArray());
             arrayView.updateStats(arrayModel.getStats());
             searchController.reset();
-            showNotification('Arreglo generado', 'success');
+            addSingleValue.value = '';
+            showNotification(`Valor ${val} agregado`, 'success');
         });
     }
 
-    // Botones de búsqueda
+    // Búsqueda secuencial con validación de dígitos
     const searchBtnSeq = document.getElementById('searchBtnSeq');
-    const searchBtnBin = document.getElementById('searchBtnBin');
-    if (searchBtnSeq) {
+    const searchValueSeq = document.getElementById('searchValueSeq');
+    if (searchBtnSeq && searchValueSeq && arrayDigitsInput) {
         searchBtnSeq.addEventListener('click', () => {
-            const val = parseInt(document.getElementById('searchValueSeq').value);
-            if (!isNaN(val)) {
-                searchController.startSequential(val);
-            } else {
+            const val = parseInt(searchValueSeq.value);
+            const digits = parseInt(arrayDigitsInput.value) || 3;
+            if (isNaN(val)) {
                 showNotification('Ingresa un valor válido', 'error');
+                return;
             }
+            if (Math.abs(val).toString().length !== digits) {
+                showNotification(`El valor a buscar debe tener exactamente ${digits} dígito(s)`, 'error');
+                return;
+            }
+            searchController.startSequential(val);
         });
     }
-    if (searchBtnBin) {
+
+    // Búsqueda binaria con validación de dígitos
+    const searchBtnBin = document.getElementById('searchBtnBin');
+    const searchValueBin = document.getElementById('searchValueBin');
+    if (searchBtnBin && searchValueBin && arrayDigitsInput) {
         searchBtnBin.addEventListener('click', () => {
-            const val = parseInt(document.getElementById('searchValueBin').value);
-            if (!isNaN(val)) {
-                searchController.startBinary(val);
-            } else {
+            const val = parseInt(searchValueBin.value);
+            const digits = parseInt(arrayDigitsInput.value) || 3;
+            if (isNaN(val)) {
                 showNotification('Ingresa un valor válido', 'error');
+                return;
             }
+            if (Math.abs(val).toString().length !== digits) {
+                showNotification(`El valor a buscar debe tener exactamente ${digits} dígito(s)`, 'error');
+                return;
+            }
+            searchController.startBinary(val);
         });
     }
 
@@ -156,117 +183,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetSearchBtn = document.getElementById('resetSearchBtn');
     if (resetSearchBtn) resetSearchBtn.addEventListener('click', () => searchController.reset());
 
-    // Panel de edición
-    const toggleEditPanel = document.getElementById('toggleEditPanel');
-    const editPanel = document.getElementById('editPanel');
-    if (toggleEditPanel && editPanel) {
-        toggleEditPanel.addEventListener('click', () => {
-            editPanel.classList.toggle('active');
-            toggleEditPanel.textContent = editPanel.classList.contains('active') ? 'Ocultar Panel' : 'Mostrar Panel';
-            if (editPanel.classList.contains('active')) {
-                document.getElementById('editArray').value = arrayModel.getArray().join(', ');
-            }
-        });
-    }
-
-    const updateArrayBtn = document.getElementById('updateArrayBtn');
-    if (updateArrayBtn) {
-        updateArrayBtn.addEventListener('click', () => {
-            const input = document.getElementById('editArray').value;
-            arrayModel.updateFromString(input);
-            if (searchController.searchAlgorithm === 'binary') arrayModel.sort();
-            arrayView.displayArray(arrayModel.getArray());
-            arrayView.updateStats(arrayModel.getStats());
-            searchController.reset();
-            showNotification('Arreglo actualizado', 'success');
-        });
-    }
-
-    const clearArrayBtn = document.getElementById('clearArrayBtn');
-    if (clearArrayBtn) {
-        clearArrayBtn.addEventListener('click', () => {
-            if (arrayModel.getArray().length === 0) { showNotification('Ya vacío', 'warning'); return; }
-            if (confirm('¿Limpiar arreglo?')) {
-                arrayModel.clear();
-                arrayView.displayArray([]);
-                arrayView.updateStats(arrayModel.getStats());
-                searchController.reset();
-                document.getElementById('editArray').value = '';
-            }
-        });
-    }
-
-    const addValueBtn = document.getElementById('addValueBtn');
-    if (addValueBtn) {
-        addValueBtn.addEventListener('click', () => {
-            const val = parseInt(document.getElementById('addValue').value);
-            if (isNaN(val)) { showNotification('Valor inválido', 'error'); return; }
-            if (!arrayModel.addValue(val)) {
-                showNotification('No se pudo agregar (duplicado o límite)', 'error');
-                return;
-            }
-            if (searchController.searchAlgorithm === 'binary') arrayModel.sort();
-            arrayView.displayArray(arrayModel.getArray());
-            arrayView.updateStats(arrayModel.getStats());
-            searchController.reset();
-            document.getElementById('editArray').value = arrayModel.getArray().join(', ');
-            showNotification(`Agregado ${val}`, 'success');
-            document.getElementById('addValue').value = '';
-        });
-    }
-
-    const removeValueBtn = document.getElementById('removeValueBtn');
-    if (removeValueBtn) {
-        removeValueBtn.addEventListener('click', () => {
-            const val = parseInt(document.getElementById('removeValue').value);
-            if (isNaN(val)) { showNotification('Valor inválido', 'error'); return; }
-            if (!arrayModel.removeValue(val)) {
-                showNotification('Valor no encontrado', 'error');
-                return;
-            }
-            arrayView.displayArray(arrayModel.getArray());
-            arrayView.updateStats(arrayModel.getStats());
-            searchController.reset();
-            document.getElementById('editArray').value = arrayModel.getArray().join(', ');
-            showNotification(`Eliminado ${val}`, 'success');
-            document.getElementById('removeValue').value = '';
-        });
-    }
-
-    // Slider
-    const arraySize = document.getElementById('arraySize');
-    if (arraySize) {
-        arraySize.addEventListener('input', (e) => {
-            document.getElementById('sizeValue').textContent = `${e.target.value} elementos`;
-        });
-    }
-
-    // Fuente de datos
-    const dataSource = document.getElementById('dataSource');
-    if (dataSource) {
-        dataSource.addEventListener('change', (e) => {
-            const manualOpts = document.getElementById('manualOptions');
-            const randomOpts = document.getElementById('randomOptions');
-            if (e.target.value === 'manual') {
-                manualOpts.style.display = 'block';
-                randomOpts.style.display = 'none';
-            } else {
-                manualOpts.style.display = 'none';
-                randomOpts.style.display = 'block';
-            }
-        });
-    }
-
     // Ocultar/mostrar secciones según pestaña activa
     const dataConfig = document.getElementById('data-config-section');
     const arrayVisual = document.getElementById('array-visual-section');
-    const dataManagement = document.getElementById('data-management-section');
 
     function toggleDataSections(show) {
         const display = show ? 'block' : 'none';
         if (dataConfig) dataConfig.style.display = display;
         if (arrayVisual) arrayVisual.style.display = display;
-        if (dataManagement) dataManagement.style.display = display;
     }
 
     document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
@@ -281,6 +205,72 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activeTab) {
         const activeTarget = activeTab.getAttribute('data-bs-target');
         toggleDataSections(activeTarget === '#sequential' || activeTarget === '#binary');
+    }
+
+    // Eventos para Hash
+    const hashSize = document.getElementById('hashSize');
+    const hashFunction = document.getElementById('hashFunction');
+    const hashInsertBtn = document.getElementById('hashInsertBtn');
+    const hashSearchBtn = document.getElementById('hashSearchBtn');
+    const hashResetBtn = document.getElementById('hashResetBtn');
+    const hashKey = document.getElementById('hashKey');
+    const hashDigits = document.getElementById('hashDigits');
+
+    if (hashSize) {
+        hashSize.addEventListener('change', () => {
+            const newSize = parseInt(hashSize.value) || 10;
+            hashController.changeSize(newSize);
+        });
+    }
+
+    if (hashFunction) {
+        hashFunction.addEventListener('change', () => {
+            hashController.changeFunction();
+        });
+    }
+
+    function validateKeyDigits(key, digits) {
+        const keyStr = Math.abs(key).toString();
+        return keyStr.length === digits;
+    }
+
+    if (hashInsertBtn && hashKey && hashDigits) {
+        hashInsertBtn.addEventListener('click', () => {
+            const key = parseInt(hashKey.value);
+            const digits = parseInt(hashDigits.value) || 3;
+            if (isNaN(key)) {
+                showNotification('Ingresa una clave válida', 'error');
+                return;
+            }
+            if (!validateKeyDigits(key, digits)) {
+                showNotification(`La clave debe tener exactamente ${digits} dígito(s)`, 'error');
+                return;
+            }
+            hashController.insert(key);
+            hashKey.value = '';
+        });
+    }
+
+    if (hashSearchBtn && hashKey && hashDigits) {
+        hashSearchBtn.addEventListener('click', () => {
+            const key = parseInt(hashKey.value);
+            const digits = parseInt(hashDigits.value) || 3;
+            if (isNaN(key)) {
+                showNotification('Ingresa una clave válida', 'error');
+                return;
+            }
+            if (!validateKeyDigits(key, digits)) {
+                showNotification(`La clave debe tener exactamente ${digits} dígito(s)`, 'error');
+                return;
+            }
+            hashController.search(key);
+        });
+    }
+
+    if (hashResetBtn) {
+        hashResetBtn.addEventListener('click', () => {
+            hashController.reset();
+        });
     }
 
     // Eventos para Árbol Digital
@@ -395,18 +385,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-    // ══════════════════════════════════════════
     // RESIDUOS MÚLTIPLES
-    // ══════════════════════════════════════════
     const residueChangeNBtn = document.getElementById('residueChangeNBtn');
     const residueInsertBtn  = document.getElementById('residueInsertBtn');
     const residueDeleteBtn  = document.getElementById('residueDeleteBtn');
     const residueSearchBtn  = document.getElementById('residueSearchBtn');
     const residueResetBtn   = document.getElementById('residueResetBtn');
 
-    // Inicializar info de n al cargar
-    residuosController._updateNInfo(2);
+    if (residuosController._updateNInfo) {
+        residuosController._updateNInfo(2);
+    }
 
     if (residueChangeNBtn) {
         residueChangeNBtn.addEventListener('click', () => {
@@ -440,9 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ══════════════════════════════════════════
     // GUARDAR ARREGLO EN PDF
-    // ══════════════════════════════════════════
     const saveArrayBtn = document.getElementById('saveArrayBtn');
     if (saveArrayBtn) {
         saveArrayBtn.addEventListener('click', () => {
@@ -526,9 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ══════════════════════════════════════════
     // RECUPERAR ARREGLO DESDE PDF
-    // ══════════════════════════════════════════
     const recoverArrayBtn = document.getElementById('recoverArrayBtn');
     const pdfFileInput = document.getElementById('pdfFileInput');
 
@@ -611,9 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ══════════════════════════════════════════
     // IMPRIMIR
-    // ══════════════════════════════════════════
     const printArrayBtn = document.getElementById('printArrayBtn');
     if (printArrayBtn) {
         printArrayBtn.addEventListener('click', () => {

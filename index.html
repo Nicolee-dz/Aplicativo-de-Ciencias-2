@@ -54,8 +54,7 @@
                             <div class="card-body">
                                 <div class="menu-icon">📊</div>
                                 <h3 class="menu-title">Búsquedas Internas</h3>
-                                <p class="menu-description">Localización de un elemento específico 
-                                    dentro de una estructura de datos.</p>
+                                <p class="menu-description">Localización de un elemento específico dentro de una estructura de datos.</p>
                                 <div class="menu-badges">
                                     <span class="badge bg-primary">Secuencial</span>
                                     <span class="badge bg-success">Binaria</span>
@@ -92,11 +91,7 @@
 
             <div class="app-header">
                 <h1>Búsquedas Internas</h1>
-                <p class="lead mb-0">Es el proceso de localización de un registro o llave específica 
-                    dentro de una estructura de datos que reside íntegramente en la memoria principal 
-                    (RAM). Se caracteriza por su alta velocidad de acceso y se aplica sobre arreglos, 
-                    listas o tablas mediante métodos comparativos o por 
-                    transformación de llaves".</p>
+                <p class="lead mb-0">Es el proceso de localización de un registro o llave específica dentro de una estructura de datos que reside íntegramente en la memoria principal (RAM). Se caracteriza por su alta velocidad de acceso y se aplica sobre arreglos, listas o tablas mediante métodos comparativos o por transformación de llaves".</p>
             </div>
 
             <!-- Pestañas de métodos -->
@@ -133,7 +128,7 @@
                                 <h2>Búsqueda Secuencial</h2>
                                 <div class="input-group">
                                     <label for="searchValueSeq">Valor a buscar:</label>
-                                    <input type="number" id="searchValueSeq" class="form-control" placeholder="Ingresa el valor">
+                                    <input type="number" id="searchValueSeq" class="form-control form-control-lg" placeholder="Ingresa el valor">
                                 </div>
                                 <button class="search-btn w-100 mt-2" id="searchBtnSeq">Buscar Secuencial</button>
                                 <button class="delete-btn w-100 mt-2" id="deleteBtnSeq">Eliminar Encontrado</button>
@@ -150,7 +145,7 @@
                                 <h2>Búsqueda Binaria</h2>
                                 <div class="input-group">
                                     <label for="searchValueBin">Valor a buscar:</label>
-                                    <input type="number" id="searchValueBin" class="form-control" placeholder="Ingresa el valor">
+                                    <input type="number" id="searchValueBin" class="form-control form-control-lg" placeholder="Ingresa el valor">
                                 </div>
                                 <button class="search-btn w-100 mt-2" id="searchBtnBin">Buscar Binaria</button>
                                 <button class="delete-btn w-100 mt-2" id="deleteBtnBin">Eliminar Encontrado</button>
@@ -170,19 +165,23 @@
                                 <h2>Configuración Hash</h2>
                                 <div class="input-group">
                                     <label for="hashSize">Tamaño de la tabla (máx. 100):</label>
-                                    <input type="number" id="hashSize" min="1" max="100" value="10" class="form-control">
+                                    <input type="number" id="hashSize" min="1" max="100" value="10" class="form-control form-control-lg">
                                 </div>
                                 <div class="input-group">
                                     <label for="hashFunction">Función hash:</label>
-                                    <select id="hashFunction" class="form-select">
+                                    <select id="hashFunction" class="form-select form-select-lg">
                                         <option value="division">División (clave % tamaño)</option>
                                         <option value="multiplication">Multiplicación</option>
                                         <option value="folding">Plegamiento (suma de dígitos)</option>
                                     </select>
                                 </div>
                                 <div class="input-group">
+                                    <label for="hashDigits">Dígitos exactos de la clave:</label>
+                                    <input type="number" id="hashDigits" min="1" max="10" value="3" class="form-control form-control-lg">
+                                </div>
+                                <div class="input-group">
                                     <label for="hashKey">Clave:</label>
-                                    <input type="number" id="hashKey" class="form-control" placeholder="Valor a insertar/buscar">
+                                    <input type="number" id="hashKey" class="form-control form-control-lg" placeholder="Valor a insertar/buscar">
                                 </div>
                                 <div class="button-group">
                                     <button class="btn btn-primary" id="hashInsertBtn">Insertar</button>
@@ -362,7 +361,6 @@
                                 </div>
                                 <button class="search-btn w-100 mt-2" id="residueSearchBtn">Buscar Carácter</button>
                                 <button class="reset-btn w-100 mt-2" id="residueResetBtn">Reiniciar Árbol</button>
-                                <!-- Info de búsqueda -->
                                 <div id="residueStepInfo" class="step-info mt-3" style="display:none;">
                                     <p id="residueStepDescription"></p>
                                 </div>
@@ -398,40 +396,32 @@
                         </div>
                     </div>
                 </div>
-</div><!-- fin tab-content -->
+            </div><!-- fin tab-content -->
 
-            <!-- Sección de Configuración de Datos (visible solo en Secuencial/Binaria) -->
+            <!-- Sección de Construcción del Arreglo (visible solo en Secuencial/Binaria) -->
             <div class="section" id="data-config-section">
-                <h2>Configuración de Datos</h2>
-                <div class="row g-4">
+                <h2>Construcción del Arreglo</h2>
+                <p class="text-muted">El arreglo inicia vacío. Agrega valores uno por uno.</p>
+                <div class="row">
                     <div class="col-md-6">
+                        <!-- Campo de dígitos exactos mejorado -->
+                        <div class="mb-3">
+                            <label for="arrayDigits" class="form-label fw-bold">Dígitos exactos de los valores:</label>
+                            <input type="number" id="arrayDigits" min="1" max="10" value="3" class="form-control form-control-lg">
+                            <small class="text-muted">Los valores deben tener esta cantidad de dígitos.</small>
+                        </div>
                         <div class="input-group">
-                            <label for="dataSource">Fuente de datos:</label>
-                            <select id="dataSource" class="form-select">
-                                <option value="random">Generar arreglo aleatorio</option>
-                                <option value="manual">Ingresar arreglo manualmente</option>
-                                <option value="sorted">Generar arreglo ordenado</option>
-                            </select>
-                        </div>
-                        <div class="input-group" id="randomOptions">
-                            <label for="arraySize">Tamaño del arreglo (máx. 100):</label>
-                            <input type="range" id="arraySize" min="5" max="100" value="15" class="form-range">
-                            <div class="d-flex justify-content-between">
-                                <small>5</small>
-                                <span id="sizeValue" class="fw-bold">15 elementos</span>
-                                <small>100</small>
+                            <label for="addSingleValue" class="form-label fw-bold">Valor a agregar:</label>
+                            <div class="d-flex gap-2">
+                                <input type="number" id="addSingleValue" class="form-control form-control-lg" placeholder="Ingresa un número">
+                                <button id="addSingleBtn" class="btn btn-success btn-lg">Agregar</button>
                             </div>
+                            <small class="text-muted">No se permiten duplicados. Máximo 100 elementos.</small>
                         </div>
-                        <div class="input-group" id="manualOptions" style="display: none;">
-                            <label for="manualArray">Ingresa números únicos separados por comas:</label>
-                            <input type="text" id="manualArray" class="form-control" placeholder="Ej: 5, 12, 8, 25, 3, 17">
-                            <small class="text-muted mt-1">Los duplicados se eliminan.</small>
-                        </div>
-                        <button id="generateBtn" class="btn btn-primary w-100 mt-2">Generar Arreglo</button>
                     </div>
                     <div class="col-md-6">
                         <div class="input-group">
-                            <label>Acciones rápidas</label>
+                            <label class="form-label fw-bold">Acciones rápidas</label>
                             <button class="reset-btn w-100 mt-2" id="resetSearchBtn">Reiniciar Búsqueda</button>
                             <button class="btn-save-array w-100 mt-2" id="saveArrayBtn">Guardar Arreglo (PDF)</button>
                             <button class="btn-recover-array w-100 mt-2" id="recoverArrayBtn">Recuperar Arreglo</button>
@@ -456,38 +446,6 @@
                     <div class="stat"><span class="stat-value" id="arrayMin">-</span><div class="stat-label">Mínimo</div></div>
                     <div class="stat"><span class="stat-value" id="arrayMax">-</span><div class="stat-label">Máximo</div></div>
                     <div class="stat"><span class="stat-value" id="arraySum">0</span><div class="stat-label">Suma</div></div>
-                </div>
-            </div>
-
-            <!-- Sección de Gestión de Datos -->
-            <div class="data-management section" id="data-management-section">
-                <h2>Gestión de Datos</h2>
-                <button class="edit-btn w-100 mb-3" id="toggleEditPanel">Mostrar/Ocultar Panel de Edición</button>
-                <div class="edit-panel" id="editPanel">
-                    <div class="input-group">
-                        <label for="editArray">Editar arreglo (números únicos, máx. 100):</label>
-                        <textarea id="editArray" rows="4" class="form-control" placeholder="Ej: 5,12,8,25,3,17"></textarea>
-                    </div>
-                    <div class="button-group mt-3">
-                        <button id="updateArrayBtn" class="btn btn-primary">Actualizar</button>
-                        <button class="reset-btn" id="clearArrayBtn">Limpiar</button>
-                    </div>
-                    <div class="row mt-4 g-3">
-                        <div class="col-md-6">
-                            <label for="addValue">Agregar valor único:</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" id="addValue" class="form-control" placeholder="Nuevo valor">
-                                <button id="addValueBtn" class="btn btn-success">Agregar</button>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="removeValue">Eliminar valor:</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" id="removeValue" class="form-control" placeholder="Valor a eliminar">
-                                <button class="reset-btn" id="removeValueBtn">Eliminar</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
