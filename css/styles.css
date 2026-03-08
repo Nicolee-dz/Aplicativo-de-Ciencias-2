@@ -1,15 +1,15 @@
 :root {
-    --primary-color: #4b6cb7;
-    --secondary-color: #182848;
-    --success-color: #2ecc71;
-    --warning-color: #f39c12;
-    --danger-color: #e74c3c;
-    --light-color: #f8f9fa;
-    --dark-color: #2c3e50;
+    --primary-color: #2563cc;
+    --secondary-color: #1a3f8a;
+    --success-color: #2563cc;
+    --warning-color: #2563cc;
+    --danger-color: #1a3f8a;
+    --light-color: #cfe2ff;
+    --dark-color: #1a3f8a;
 }
 
 body {
-    background-color: #f8f9fa;
+    background-color: #dce4f0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
     padding-bottom: 0;
@@ -206,7 +206,7 @@ input, select, button, textarea {
 }
 
 button {
-    background-color: var(--primary-color);
+    background-color: #2563cc;
     color: white;
     border: none;
     cursor: pointer;
@@ -216,39 +216,39 @@ button {
 }
 
 button:hover {
-    background-color: #3a5ca9;
+    background-color: #1a3f8a;
 }
 
 .search-btn {
-    background-color: var(--success-color);
+    background-color: #2563cc;
 }
 .search-btn:hover {
-    background-color: #27ae60;
+    background-color: #2563cc;
 }
 
 .reset-btn {
-    background-color: var(--danger-color);
+    background-color: #2563cc;
 }
 .reset-btn:hover {
-    background-color: #c0392b;
+    background-color: #1a3f8a;
 }
 
 .edit-btn {
-    background-color: var(--warning-color);
+    background-color: #2563cc;
 }
 .edit-btn:hover {
-    background-color: #d68910;
+    background-color: #1a3f8a;
 }
 
 .delete-btn {
-    background-color: var(--danger-color);
+    background-color: #2563cc;
     margin-top: 8px;
     display: none;
 }
 
 /* ── Botones de Acciones Rápidas (sólidos) ── */
 .btn-save-array {
-    background-color: #27ae60;
+    background-color: #2563cc;
     color: white;
     border: none;
     border-radius: 6px;
@@ -262,11 +262,11 @@ button:hover {
     margin-top: 10px;
 }
 .btn-save-array:hover {
-    background-color: #1e8449;
+    background-color: #1a3f8a;
 }
 
 .btn-recover-array {
-    background-color: #e67e22;
+    background-color: #2563cc;
     color: white;
     border: none;
     border-radius: 6px;
@@ -280,11 +280,11 @@ button:hover {
     margin-top: 10px;
 }
 .btn-recover-array:hover {
-    background-color: #ca6f1e;
+    background-color: #1a3f8a;
 }
 
 .btn-print-array {
-    background-color: #7f8c8d;
+    background-color: #2563cc;
     color: white;
     border: none;
     border-radius: 6px;
@@ -298,7 +298,7 @@ button:hover {
     margin-top: 10px;
 }
 .btn-print-array:hover {
-    background-color: #616a6b;
+    background-color: #1a3f8a;
 }
 
 .button-group {
@@ -427,7 +427,7 @@ button:hover {
 }
 .stat-label {
     font-size: 0.9rem;
-    color: #7f8c8d;
+    color: #2563cc;
 }
 
 .notification {
@@ -442,16 +442,16 @@ button:hover {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     animation: slideIn 0.3s ease-out;
 }
-.notification.success { background-color: var(--success-color); }
-.notification.error { background-color: var(--danger-color); }
-.notification.warning { background-color: var(--warning-color); }
+.notification.success { background-color: #2563cc; }
+.notification.error { background-color: #2563cc; }
+.notification.warning { background-color: #2563cc; }
 @keyframes slideIn {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
 }
 
 .back-to-menu {
-    background-color: var(--dark-color);
+    background-color: #2563cc;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -461,7 +461,7 @@ button:hover {
     padding: 12px 20px;
 }
 .back-to-menu:hover {
-    background-color: #1a252f;
+    background-color: #1a3f8a;
 }
 
 /* Pestañas */
@@ -470,7 +470,7 @@ button:hover {
     font-weight: 600;
 }
 .nav-tabs .nav-link.active {
-    background-color: var(--primary-color);
+    background-color: #2563cc;
     color: white;
     border-color: var(--primary-color);
 }
@@ -597,7 +597,7 @@ button:hover {
 
 /* Botón eliminar carácter (amarillo sólido) */
 .btn-delete-char {
-    background-color: #e6a800;
+    background-color: #2563cc;
     color: white;
     border: none;
     border-radius: 6px;
@@ -611,7 +611,7 @@ button:hover {
     margin-top: 10px;
 }
 .btn-delete-char:hover {
-    background-color: #c98f00;
+    background-color: #1a3f8a;
     color: white;
 }
 
@@ -921,3 +921,44 @@ hr {
         font-size: 0.8rem;
     }
 }
+/* ── Override Bootstrap + nav hover fix ── */
+.nav-tabs .nav-link {
+    color: #2563cc;
+    font-weight: 600;
+}
+.nav-tabs .nav-link:hover {
+    background-color: #2563cc;
+    color: white !important;
+    border-color: #2563cc;
+}
+.nav-tabs .nav-link.active {
+    background-color: #1a3f8a !important;
+    color: white !important;
+    border-color: #1a3f8a !important;
+}
+.btn-success,
+.btn-success:focus,
+.btn-success:active {
+    background-color: #2563cc !important;
+    border-color: #2563cc !important;
+    color: white !important;
+}
+.btn-success:hover {
+    background-color: #1a3f8a !important;
+    border-color: #1a3f8a !important;
+}
+.btn-primary,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #2563cc !important;
+    border-color: #2563cc !important;
+    color: white !important;
+}
+.btn-primary:hover {
+    background-color: #1a3f8a !important;
+    border-color: #1a3f8a !important;
+}
+.bg-success { background-color: #2563cc !important; }
+.bg-primary { background-color: #2563cc !important; }
+.bg-info    { background-color: #1a3f8a !important; }
+.bg-secondary { background-color: #8aa5c8 !important; }
