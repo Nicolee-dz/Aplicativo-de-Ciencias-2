@@ -294,14 +294,8 @@ document.addEventListener('DOMContentLoaded', () => {
     bindEnterToButton('searchValueBin', 'searchBtnBin');
     bindEnterToButton('hashKey', 'hashInsertBtn');
     bindEnterToButton('digitalWord', 'digitalInsertBtn');
-    bindEnterToButton('digitalDeleteChar', 'digitalDeleteBtn');
-    bindEnterToButton('digitalChar', 'digitalSearchBtn');
     bindEnterToButton('triesWord', 'triesInsertBtn');
-    bindEnterToButton('triesDeleteChar', 'triesDeleteBtn');
-    bindEnterToButton('triesChar', 'triesSearchBtn');
     bindEnterToButton('residueWord', 'residueInsertBtn');
-    bindEnterToButton('residueDeleteChar', 'residueDeleteBtn');
-    bindEnterToButton('residueSearchChar', 'residueSearchBtn');
 
     // Eventos para Árbol Digital
     const digitalInsertBtn = document.getElementById('digitalInsertBtn');
@@ -316,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (digitalSearchBtn) {
         digitalSearchBtn.addEventListener('click', () => {
-            const char = document.getElementById('digitalChar').value;
+            const char = document.getElementById('digitalWord').value;
             digitalController.searchChar(char);
         });
     }
@@ -330,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const digitalDeleteBtn = document.getElementById('digitalDeleteBtn');
     if (digitalDeleteBtn) {
         digitalDeleteBtn.addEventListener('click', () => {
-            const char = document.getElementById('digitalDeleteChar').value;
+            const char = document.getElementById('digitalWord').value;
             if (!char || char.trim().length !== 1) {
                 showNotification('Ingresa un único carácter válido', 'error');
                 return;
@@ -351,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tbody.appendChild(row);
                     }
                 }
-                document.getElementById('digitalDeleteChar').value = '';
+                document.getElementById('digitalWord').value = '';
                 showNotification(`Carácter '${char.toUpperCase()}' eliminado`, 'success');
             } else {
                 showNotification(`Carácter '${char.toUpperCase()}' no existe en el árbol`, 'error');
@@ -372,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (triesSearchBtn) {
         triesSearchBtn.addEventListener('click', () => {
-            const char = document.getElementById('triesChar').value;
+            const char = document.getElementById('triesWord').value;
             triesController.searchChar(char);
         });
     }
@@ -386,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const triesDeleteBtn = document.getElementById('triesDeleteBtn');
     if (triesDeleteBtn) {
         triesDeleteBtn.addEventListener('click', () => {
-            const char = document.getElementById('triesDeleteChar').value;
+            const char = document.getElementById('triesWord').value;
             if (!char || char.trim().length !== 1) {
                 showNotification('Ingresa un único carácter válido', 'error');
                 return;
@@ -407,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         tbody.appendChild(row);
                     }
                 }
-                document.getElementById('triesDeleteChar').value = '';
+                document.getElementById('triesWord').value = '';
                 showNotification(`Carácter '${char.toUpperCase()}' eliminado`, 'success');
             } else {
                 showNotification(`Carácter '${char.toUpperCase()}' no existe en el árbol`, 'error');
@@ -441,14 +435,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (residueDeleteBtn) {
         residueDeleteBtn.addEventListener('click', () => {
-            const char = document.getElementById('residueDeleteChar').value;
+            const char = document.getElementById('residueWord').value;
             residuosController.deleteChar(char);
-            document.getElementById('residueDeleteChar').value = '';
+            document.getElementById('residueWord').value = '';
         });
     }
     if (residueSearchBtn) {
         residueSearchBtn.addEventListener('click', () => {
-            const char = document.getElementById('residueSearchChar').value;
+            const char = document.getElementById('residueWord').value;
             residuosController.searchChar(char);
         });
     }
