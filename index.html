@@ -252,7 +252,7 @@
                         <div class="col-12">
                             <div class="section">
                                 <h2>Visualización del Árbol</h2>
-                                <div id="digitalTreeContainer" class="digital-tree-scroll" style="height: 700px;"></div>
+                                <div id="digitalTreeContainer" class="digital-tree-scroll"></div>
                             </div>
                         </div>
                     </div>
@@ -308,7 +308,7 @@
                         <div class="col-12">
                             <div class="section">
                                 <h2>Visualización del Árbol</h2>
-                                <div id="triesTreeContainer" class="digital-tree-scroll" style="height: 700px;"></div>
+                                <div id="triesTreeContainer" class="digital-tree-scroll"></div>
                             </div>
                         </div>
                     </div>
@@ -391,35 +391,35 @@
                         <div class="col-12">
                             <div class="section">
                                 <h2>Visualización del Árbol</h2>
-                                <div id="residueTreeContainer" class="digital-tree-scroll" style="height: 700px;"></div>
+                                <div id="residueTreeContainer" class="digital-tree-scroll"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div><!-- fin tab-content -->
 
-            <!-- Sección de Construcción del Arreglo (visible solo en Secuencial/Binaria) -->
-            <div class="section" id="data-config-section">
-                <h2>Construcción del Arreglo</h2>
-                <p class="text-muted">El arreglo inicia vacío. Agrega valores uno por uno.</p>
-                <div class="row">
-                    <div class="col-md-6">
-                        <!-- Campo de dígitos exactos mejorado -->
-                        <div class="mb-3">
+            <!-- Área de trabajo de arreglos (visible solo en Secuencial/Binaria) -->
+            <div class="row g-3 mt-1" id="array-workspace">
+                <div class="col-lg-5 col-md-6">
+                    <div class="section" id="data-config-section">
+                        <h2>Construcción del Arreglo</h2>
+                        <p class="text-muted mb-2">El arreglo inicia vacío. Agrega valores uno por uno.</p>
+
+                        <div class="mb-2">
                             <label for="arrayDigits" class="form-label fw-bold">Dígitos exactos de los valores:</label>
                             <input type="number" id="arrayDigits" min="1" max="10" value="3" class="form-control form-control-lg">
                             <small class="text-muted">Los valores deben tener esta cantidad de dígitos.</small>
                         </div>
+
                         <div class="input-group">
                             <label for="addSingleValue" class="form-label fw-bold">Valor a agregar:</label>
-                            <div class="d-flex gap-2">
+                            <div class="d-flex gap-2 align-items-center">
                                 <input type="number" id="addSingleValue" class="form-control form-control-lg" placeholder="Ingresa un número">
-                                <button id="addSingleBtn" class="btn btn-success btn-lg">Agregar</button>
+                                <button id="addSingleBtn" class="btn btn-success">Agregar</button>
                             </div>
                             <small class="text-muted">No se permiten duplicados. Máximo 100 elementos.</small>
                         </div>
-                    </div>
-                    <div class="col-md-6">
+
                         <div class="input-group">
                             <label class="form-label fw-bold">Acciones rápidas</label>
                             <button class="reset-btn w-100 mt-2" id="resetSearchBtn">Reiniciar Búsqueda</button>
@@ -430,22 +430,23 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Sección de Visualización del Arreglo -->
-            <div class="section" id="array-visual-section">
-                <h2>Visualización del Arreglo</h2>
-                <div id="arrayContainer"></div>
-                <div id="stepInfo" class="step-info" style="display: none;">
-                    <h3>Paso a paso:</h3>
-                    <p id="stepDescription"></p>
-                    <p><strong>Comparaciones:</strong> <span id="comparisons" class="badge bg-primary">0</span></p>
-                </div>
-                <div class="array-stats mt-4">
-                    <div class="stat"><span class="stat-value" id="arrayLength">0</span><div class="stat-label">Elementos</div></div>
-                    <div class="stat"><span class="stat-value" id="arrayMin">-</span><div class="stat-label">Mínimo</div></div>
-                    <div class="stat"><span class="stat-value" id="arrayMax">-</span><div class="stat-label">Máximo</div></div>
-                    <div class="stat"><span class="stat-value" id="arraySum">0</span><div class="stat-label">Suma</div></div>
+                <div class="col-lg-7 col-md-6">
+                    <div class="section" id="array-visual-section">
+                        <h2>Visualización del Arreglo</h2>
+                        <div id="arrayContainer"></div>
+                        <div id="stepInfo" class="step-info" style="display: none;">
+                            <h3>Paso a paso:</h3>
+                            <p id="stepDescription"></p>
+                            <p><strong>Comparaciones:</strong> <span id="comparisons" class="badge bg-primary">0</span></p>
+                        </div>
+                        <div class="array-stats mt-2">
+                            <div class="stat"><span class="stat-value" id="arrayLength">0</span><div class="stat-label">Elementos</div></div>
+                            <div class="stat"><span class="stat-value" id="arrayMin">-</span><div class="stat-label">Mínimo</div></div>
+                            <div class="stat"><span class="stat-value" id="arrayMax">-</span><div class="stat-label">Máximo</div></div>
+                            <div class="stat"><span class="stat-value" id="arraySum">0</span><div class="stat-label">Suma</div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

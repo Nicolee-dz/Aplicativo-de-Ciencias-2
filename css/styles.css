@@ -12,21 +12,28 @@ body {
     background-color: #f8f9fa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
-    padding-bottom: 20px;
+    padding-bottom: 0;
+    font-size: 14px;
+    overflow: hidden;
 }
 
 .main-container {
     max-width: 1200px;
     margin: 0 auto;
+    height: 100vh;
+    padding: 8px 12px;
+    overflow: hidden;
 }
 
 /* Menú principal */
 .menu-container {
-    min-height: 100vh;
+    min-height: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 10px;
+    overflow: auto;
 }
 
 .menu-card {
@@ -36,7 +43,7 @@ body {
     border-radius: 15px;
     overflow: hidden;
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    min-height: 280px;
+    min-height: 220px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -48,7 +55,7 @@ body {
 }
 
 .menu-card .card-body {
-    padding: 2.5rem;
+    padding: 1.4rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -57,16 +64,16 @@ body {
 }
 
 .menu-icon {
-    font-size: 3.5rem;
-    margin-bottom: 1.5rem;
-    min-height: 70px;
+    font-size: 2.6rem;
+    margin-bottom: 0.8rem;
+    min-height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .menu-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--primary-color);
     margin-bottom: 0.75rem;
@@ -78,9 +85,9 @@ body {
 .menu-description {
     color: #6c757d;
     text-align: center;
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
+    line-height: 1.35;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
     width: 100%;
 }
 
@@ -93,8 +100,8 @@ body {
 }
 
 .badge {
-    font-size: 0.85rem;
-    padding: 6px 12px;
+    font-size: 0.75rem;
+    padding: 4px 9px;
     border-radius: 20px;
     font-weight: 600;
 }
@@ -102,31 +109,57 @@ body {
 /* Aplicativo */
 .app-container {
     display: none;
-    margin-top: 20px;
+    margin-top: 8px;
+    height: 100%;
+    min-height: 0;
+    gap: 8px;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.app-container .row {
+    --bs-gutter-y: 0.8rem;
 }
 
 .app-header {
     text-align: center;
-    margin-bottom: 30px;
-    padding: 20px;
+    margin-bottom: 0;
+    padding: 10px 14px;
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: white;
     border-radius: 10px;
 }
 
+.app-header h1 {
+    font-size: 1.35rem;
+    margin-bottom: 4px;
+}
+
+.app-header .lead {
+    font-size: 0.83rem;
+    line-height: 1.3;
+    margin-bottom: 0;
+}
+
 .section {
     background-color: white;
     border-radius: 10px;
-    padding: 25px;
+    padding: 14px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .section h2 {
     color: var(--dark-color);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
+    font-size: 1.08rem;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
     border-bottom: 2px solid var(--primary-color);
+}
+
+.section h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
 }
 
 .algorithm-info {
@@ -137,22 +170,39 @@ body {
 }
 
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     font-weight: 600;
     color: var(--dark-color);
+    font-size: 0.88rem;
 }
 
 input, select, button, textarea {
     width: 100%;
-    padding: 12px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 0.9rem;
+}
+
+.form-control,
+.form-select,
+.btn {
+    font-size: 0.88rem;
+    padding-top: 0.4rem;
+    padding-bottom: 0.4rem;
+}
+
+.form-control-lg,
+.form-select-lg {
+    min-height: calc(1.35em + 0.8rem + 2px);
+    padding: 0.4rem 0.65rem;
+    font-size: 0.9rem;
+    border-radius: 0.4rem;
 }
 
 button {
@@ -162,7 +212,7 @@ button {
     cursor: pointer;
     font-weight: 600;
     transition: background-color 0.3s;
-    margin-top: 10px;
+    margin-top: 6px;
 }
 
 button:hover {
@@ -192,7 +242,7 @@ button:hover {
 
 .delete-btn {
     background-color: var(--danger-color);
-    margin-top: 15px;
+    margin-top: 8px;
     display: none;
 }
 
@@ -703,4 +753,171 @@ button:hover {
     border-bottom: 2px solid;
     padding: 0 2px;
     cursor: default;
+}
+
+/* Compact mode: reduce typography and spacing to avoid full-page vertical scroll */
+.back-to-menu {
+    margin-bottom: 0;
+    padding: 8px 12px;
+}
+
+.btn-save-array,
+.btn-recover-array,
+.btn-print-array,
+.btn-delete-char {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.button-group {
+    gap: 8px;
+    margin-top: 6px;
+}
+
+#arrayContainer,
+#hashTableContainer {
+    min-height: 140px;
+    max-height: 320px;
+}
+
+.step-info {
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.edit-panel {
+    margin-top: 10px;
+    padding: 12px;
+}
+
+.array-stats {
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.stat-value {
+    font-size: 1.15rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+}
+
+.nav-tabs .nav-link {
+    font-size: 0.86rem;
+    padding: 0.42rem 0.7rem;
+}
+
+.tab-content {
+    padding: 10px;
+    margin-bottom: 0;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+#array-workspace {
+    margin-top: 6px !important;
+}
+
+#data-config-section,
+#array-visual-section {
+    margin-bottom: 0;
+    height: 100%;
+}
+
+#addSingleBtn,
+.section .reset-btn,
+.section .search-btn,
+.section .delete-btn,
+.section .btn {
+    padding-top: 0.28rem;
+    padding-bottom: 0.28rem;
+    font-size: 0.8rem;
+}
+
+.digital-tree-scroll {
+    height: min(34vh, 280px);
+    min-height: 220px;
+    padding: 10px;
+}
+
+#digitalCharTable {
+    margin-top: 10px;
+    font-size: 0.82rem;
+}
+
+#digitalCharTable th {
+    padding: 7px 6px;
+}
+
+#digitalCharTableBody td {
+    padding: 6px;
+}
+
+#digitalCharTableBody td:first-child {
+    font-size: 0.9rem;
+}
+
+.table {
+    margin-bottom: 0.35rem;
+}
+
+hr {
+    margin: 0.55rem 0;
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        padding: 6px 8px;
+    }
+
+    .menu-card {
+        min-height: 200px;
+    }
+
+    .menu-title {
+        font-size: 1.1rem;
+    }
+
+    .menu-description {
+        font-size: 0.84rem;
+    }
+
+    .menu-icon {
+        font-size: 2.2rem;
+    }
+
+    .app-header .lead {
+        font-size: 0.78rem;
+    }
+
+    .digital-tree-scroll {
+        height: 210px;
+        min-height: 180px;
+    }
+}
+
+@media (max-width: 576px) {
+    .menu-card {
+        min-height: 180px;
+    }
+
+    .menu-title {
+        font-size: 1rem;
+    }
+
+    .menu-description {
+        font-size: 0.8rem;
+    }
+
+    .menu-icon {
+        font-size: 2rem;
+    }
+
+    .nav-tabs .nav-link {
+        padding: 0.35rem 0.55rem;
+        font-size: 0.8rem;
+    }
 }

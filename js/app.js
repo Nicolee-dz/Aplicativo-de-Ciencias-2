@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         [menuPrincipal, submenuBusquedas, appContainer].forEach(c => {
             if (c) {
                 c.style.display = (c === container)
-                    ? (c === appContainer ? 'block' : 'flex')
+                    ? 'flex'
                     : 'none';
             }
         });
@@ -186,9 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ocultar/mostrar secciones según pestaña activa
     const dataConfig = document.getElementById('data-config-section');
     const arrayVisual = document.getElementById('array-visual-section');
+    const arrayWorkspace = document.getElementById('array-workspace');
 
     function toggleDataSections(show) {
         const display = show ? 'block' : 'none';
+        if (arrayWorkspace) arrayWorkspace.style.display = show ? 'flex' : 'none';
         if (dataConfig) dataConfig.style.display = display;
         if (arrayVisual) arrayVisual.style.display = display;
     }
@@ -272,6 +274,34 @@ document.addEventListener('DOMContentLoaded', () => {
             hashController.reset();
         });
     }
+
+    function bindEnterToButton(inputId, buttonId) {
+        const input = document.getElementById(inputId);
+        const button = document.getElementById(buttonId);
+        if (!input || !button) return;
+
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                button.click();
+            }
+        });
+    }
+
+    // Atajos con Enter para ejecutar acciones desde los inputs
+    bindEnterToButton('addSingleValue', 'addSingleBtn');
+    bindEnterToButton('searchValueSeq', 'searchBtnSeq');
+    bindEnterToButton('searchValueBin', 'searchBtnBin');
+    bindEnterToButton('hashKey', 'hashInsertBtn');
+    bindEnterToButton('digitalWord', 'digitalInsertBtn');
+    bindEnterToButton('digitalDeleteChar', 'digitalDeleteBtn');
+    bindEnterToButton('digitalChar', 'digitalSearchBtn');
+    bindEnterToButton('triesWord', 'triesInsertBtn');
+    bindEnterToButton('triesDeleteChar', 'triesDeleteBtn');
+    bindEnterToButton('triesChar', 'triesSearchBtn');
+    bindEnterToButton('residueWord', 'residueInsertBtn');
+    bindEnterToButton('residueDeleteChar', 'residueDeleteBtn');
+    bindEnterToButton('residueSearchChar', 'residueSearchBtn');
 
     // Eventos para Árbol Digital
     const digitalInsertBtn = document.getElementById('digitalInsertBtn');
