@@ -115,46 +115,19 @@
                     <button class="nav-link" id="residue-tab" data-bs-toggle="tab" data-bs-target="#residuemultiple" type="button" role="tab">Residuos Múltiples</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link disabled" id="huffman-tab" data-bs-toggle="tab" data-bs-target="#huffman" type="button" role="tab">Árboles de Huffman</button>
+                    <button class="nav-link" id="huffman-tab" data-bs-toggle="tab" data-bs-target="#huffman" type="button" role="tab">Árboles de Huffman</button>
                 </li>
             </ul>
 
             <div class="tab-content" id="methodTabsContent">
                 <!-- Pestaña Secuencial -->
                 <div class="tab-pane fade show active" id="sequential" role="tabpanel">
-                    <div class="row g-4">
-                        <div class="col-12">
-                            <div class="section">
-                                <h2>Búsqueda Secuencial</h2>
-                                <div class="input-group">
-                                    <label for="searchValueSeq">Valor a buscar:</label>
-                                    <input type="number" id="searchValueSeq" class="form-control form-control-lg" placeholder="Ingresa el valor">
-                                </div>
-                                <button class="search-btn w-100 mt-2" id="searchBtnSeq">Buscar Secuencial</button>
-                                <button class="delete-btn w-100 mt-2" id="deleteBtnSeq">Eliminar Encontrado</button>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="row g-4"></div>
                 </div>
 
                 <!-- Pestaña Binaria -->
                 <div class="tab-pane fade" id="binary" role="tabpanel">
-                    <div class="row g-4">
-                        <div class="col-12">
-                            <div class="section">
-                                <h2>Búsqueda Binaria</h2>
-                                <div class="input-group">
-                                    <label for="searchValueBin">Valor a buscar:</label>
-                                    <input type="number" id="searchValueBin" class="form-control form-control-lg" placeholder="Ingresa el valor">
-                                </div>
-                                <button class="search-btn w-100 mt-2" id="searchBtnBin">Buscar Binaria</button>
-                                <button class="delete-btn w-100 mt-2" id="deleteBtnBin">Eliminar Encontrado</button>
-                                <div class="alert alert-info mt-3">
-                                    <small>Los datos se ordenan automáticamente si es necesario.</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="row g-4"></div>
                 </div>
 
                 <!-- Pestaña Hash -->
@@ -324,9 +297,6 @@
                                     <button class="search-btn" id="residueSearchBtn">Buscar</button>
                                 </div>
                                 <button class="reset-btn w-100 mt-2" id="residueResetBtn">Reiniciar Árbol</button>
-                                <div id="residueStepInfo" class="step-info mt-3" style="display:none;">
-                                    <p id="residueStepDescription"></p>
-                                </div>
                             </div>
                             <div class="section mt-2">
                                 <h3>Registro de Caracteres</h3>
@@ -348,10 +318,65 @@
                             <div class="section tree-section-full">
                                 <h2>Visualización del Árbol</h2>
                                 <div id="residueTreeContainer" class="digital-tree-scroll"></div>
+                                <div id="residueStepInfo" class="step-info mt-3" style="display:none;">
+                                    <p id="residueStepDescription"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- Pestaña Huffman -->
+                <div class="tab-pane fade" id="huffman" role="tabpanel">
+
+                    <!-- Fila superior: controles izq + árbol der -->
+                    <div class="row g-4">
+                        <!-- Izquierda: entrada + stats + tabla de códigos -->
+                        <div class="col-md-5">
+                            <div class="section">
+                                <h2>Árbol de Huffman</h2>
+                                <div class="input-group">
+                                    <label for="huffTextInput">Texto:</label>
+                                    <textarea id="huffTextInput" class="form-control" rows="2" placeholder="Ej: HOLA MUNDO"></textarea>
+                                </div>
+                                <div class="d-flex gap-2 mt-2">
+                                    <button class="btn btn-primary flex-fill" id="huffBuildTextBtn">Construir árbol</button>
+                                    <button class="reset-btn flex-fill" id="huffResetBtn">Reiniciar</button>
+                                </div>
+                            </div>
+
+                            <!-- Tabla final de códigos -->
+                            <div class="section mt-3">
+                                <h3>Tabla de Códigos</h3>
+                                <table class="table table-striped table-sm huffman-final-table">
+                                    <thead class="table-light">
+                                        <tr><th>Carácter</th><th>Fr</th><th>Binario</th><th>Li</th><th>L= ΣFr·Li</th></tr>
+                                    </thead>
+                                    <tbody id="huffmanCodesBody"></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <!-- Derecha: árbol -->
+                        <div class="col-md-7">
+                            <div class="section">
+                                <h2>Visualización del Árbol</h2>
+                                <div id="huffmanTreeContainer" class="digital-tree-scroll" style="height:600px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tablas de construcción: 3 tablas por fila -->
+                    <div class="row g-4 mt-1">
+                        <div class="col-12">
+                            <div class="section">
+                                <h3>Tablas de Construcción</h3>
+                                <div id="huffmanStepsContainer" class="huff-steps-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div><!-- fin tab-content -->
 
             <!-- Área de trabajo de arreglos (visible solo en Secuencial/Binaria) -->
@@ -362,18 +387,25 @@
                         <p class="text-muted mb-2">El arreglo inicia vacío. Agrega valores uno por uno.</p>
 
                         <div class="mb-2">
+                            <label for="arrayRange" class="form-label fw-bold">Rango (cantidad de claves):</label>
+                            <input type="number" id="arrayRange" min="1" max="10000" value="150" class="form-control form-control-lg">
+                            <small class="text-muted">El arreglo tendrá como máximo esta cantidad exacta de claves.</small>
+                        </div>
+
+                        <div class="mb-2">
                             <label for="arrayDigits" class="form-label fw-bold">Dígitos exactos de los valores:</label>
                             <input type="number" id="arrayDigits" min="1" max="10" value="3" class="form-control form-control-lg">
                             <small class="text-muted">Los valores deben tener esta cantidad de dígitos.</small>
                         </div>
 
                         <div class="input-group">
-                            <label for="addSingleValue" class="form-label fw-bold">Valor a agregar:</label>
+                            <label for="addSingleValue" class="form-label fw-bold">Clave:</label>
                             <div class="d-flex gap-2 align-items-center">
                                 <input type="number" id="addSingleValue" class="form-control form-control-lg" placeholder="Ingresa un número">
-                                <button id="addSingleBtn" class="btn btn-success">Agregar</button>
+                                <button id="addSingleBtn" class="btn btn-success">Insertar</button>
+                                <button id="searchSingleBtn" class="search-btn">Buscar</button>
                             </div>
-                            <small class="text-muted">No se permiten duplicados. Máximo 100 elementos.</small>
+                            <small class="text-muted">No se permiten duplicados. Respeta el rango configurado.</small>
                         </div>
 
                         <div class="input-group">
@@ -423,16 +455,19 @@
     <script src="js/models/DigitalTreeModel.js"></script>
     <script src="js/models/TriesModel.js"></script>
     <script src="js/models/ResiduosMultipleModel.js"></script>
+    <script src="js/models/HuffmanModel.js"></script>
     <script src="js/views/ArrayView.js"></script>
     <script src="js/views/HashView.js"></script>
     <script src="js/views/DigitalTreeView.js"></script>
     <script src="js/views/TriesView.js"></script>
     <script src="js/views/ResiduosMultipleView.js"></script>
+    <script src="js/views/HuffmanViews.js"></script>
     <script src="js/controllers/SearchController.js"></script>
     <script src="js/controllers/HashController.js"></script>
     <script src="js/controllers/DigitalTreeController.js"></script>
     <script src="js/controllers/TriesController.js"></script>
     <script src="js/controllers/ResiduosMultipleController.js"></script>
+    <script src="js/controllers/HuffmanController.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

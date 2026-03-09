@@ -37,6 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const residuosView  = new ResiduosMultipleView('residueTreeContainer');
     const residuosController = new ResiduosMultipleController(residuosModel, residuosView);
 
+    // Huffman
+    const huffmanModel      = new HuffmanModel();
+    const huffmanView       = new HuffmanView('huffmanTreeContainer');
+    const huffmanController = new HuffmanController(huffmanModel, huffmanView);
+    window.huffmanController = huffmanController;
+
     const searchController = new SearchController(arrayModel, arrayView);
     const hashController = new HashController(hashModel, hashView);
 
@@ -45,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     digitalController.init();
     triesController.init();
     residuosController.init();
+    huffmanController.init();
 
     function showContainer(container) {
         console.log('Mostrando contenedor:', container.id);
@@ -105,9 +112,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Elementos del arreglo
+    const arrayRangeInput = document.getElementById('arrayRange');
     const arrayDigitsInput = document.getElementById('arrayDigits');
     const addSingleValue = document.getElementById('addSingleValue');
     const addSingleBtn = document.getElementById('addSingleBtn');
+    const searchSingleBtn = document.getElementById('searchSingleBtn');
+
+    // Configurar rango máximo del arreglo
+    if (arrayRangeInput) {
+        const applyRange = () => {
+            const range = Math.max(1, Math.min(10000, parseInt(arrayRangeInput.value) || 150));
+            arrayRangeInput.value = range;
+            arrayModel.maxSize = range;
+
+            // Si el arreglo ya supera el nuevo rango, recortar para mantener consistencia
+            if (arrayModel.getArray().length > range) {
+                const trimmed = arrayModel.getArray().slice(0, range);
+                arrayModel.setArray(trimmed);
+                arrayView.displayArray(arrayModel.getArray());
+                arrayView.updateStats(arrayModel.getStats());
+                searchController.reset();
+                showNotification(`Arreglo ajustado al rango ${range}`, 'info');
+            }
+        };
+
+        applyRange();
+        arrayRangeInput.addEventListener('change', applyRange);
+    }
 
     // Inserción manual con validación de dígitos
     if (addSingleBtn && addSingleValue && arrayDigitsInput) {
@@ -123,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             if (!arrayModel.addValue(val)) {
-                showNotification('No se pudo agregar (duplicado o límite de 100)', 'error');
+                showNotification(`No se pudo agregar (duplicado o rango máximo ${arrayModel.maxSize})`, 'error');
                 return;
             }
             if (searchController.searchAlgorithm === 'binary') arrayModel.sort();
@@ -135,12 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Búsqueda secuencial con validación de dígitos
-    const searchBtnSeq = document.getElementById('searchBtnSeq');
-    const searchValueSeq = document.getElementById('searchValueSeq');
-    if (searchBtnSeq && searchValueSeq && arrayDigitsInput) {
-        searchBtnSeq.addEventListener('click', () => {
-            const val = parseInt(searchValueSeq.value);
+    // Búsqueda desde la clave principal (usa la pestaña activa)
+    if (searchSingleBtn && addSingleValue && arrayDigitsInput) {
+        searchSingleBtn.addEventListener('click', () => {
+            const val = parseInt(addSingleValue.value);
             const digits = parseInt(arrayDigitsInput.value) || 3;
             if (isNaN(val)) {
                 showNotification('Ingresa un valor válido', 'error');
@@ -150,34 +179,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 showNotification(`El valor a buscar debe tener exactamente ${digits} dígito(s)`, 'error');
                 return;
             }
-            searchController.startSequential(val);
+
+            const activeTarget = document.querySelector('.nav-link.active')?.getAttribute('data-bs-target');
+            if (activeTarget === '#binary') {
+                searchController.startBinary(val);
+            } else {
+                searchController.startSequential(val);
+            }
         });
     }
-
-    // Búsqueda binaria con validación de dígitos
-    const searchBtnBin = document.getElementById('searchBtnBin');
-    const searchValueBin = document.getElementById('searchValueBin');
-    if (searchBtnBin && searchValueBin && arrayDigitsInput) {
-        searchBtnBin.addEventListener('click', () => {
-            const val = parseInt(searchValueBin.value);
-            const digits = parseInt(arrayDigitsInput.value) || 3;
-            if (isNaN(val)) {
-                showNotification('Ingresa un valor válido', 'error');
-                return;
-            }
-            if (Math.abs(val).toString().length !== digits) {
-                showNotification(`El valor a buscar debe tener exactamente ${digits} dígito(s)`, 'error');
-                return;
-            }
-            searchController.startBinary(val);
-        });
-    }
-
-    // Botones de eliminar
-    const deleteBtnSeq = document.getElementById('deleteBtnSeq');
-    const deleteBtnBin = document.getElementById('deleteBtnBin');
-    if (deleteBtnSeq) deleteBtnSeq.addEventListener('click', () => searchController.deleteFound());
-    if (deleteBtnBin) deleteBtnBin.addEventListener('click', () => searchController.deleteFound());
 
     // Reiniciar búsqueda
     const resetSearchBtn = document.getElementById('resetSearchBtn');
@@ -290,12 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Atajos con Enter para ejecutar acciones desde los inputs
     bindEnterToButton('addSingleValue', 'addSingleBtn');
-    bindEnterToButton('searchValueSeq', 'searchBtnSeq');
-    bindEnterToButton('searchValueBin', 'searchBtnBin');
     bindEnterToButton('hashKey', 'hashInsertBtn');
     bindEnterToButton('digitalWord', 'digitalInsertBtn');
     bindEnterToButton('triesWord', 'triesInsertBtn');
     bindEnterToButton('residueWord', 'residueInsertBtn');
+    bindEnterToButton('huffTextInput', 'huffBuildTextBtn');
 
     // Eventos para Árbol Digital
     const digitalInsertBtn = document.getElementById('digitalInsertBtn');
@@ -691,6 +700,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inicializar hash
     hashController.reset();
+
+    // ══════════════════════════════════════════
+    // HUFFMAN
+    // ══════════════════════════════════════════
+    const huffBuildTextBtn = document.getElementById('huffBuildTextBtn');
+    const huffResetBtn     = document.getElementById('huffResetBtn');
+
+    if (huffBuildTextBtn) huffBuildTextBtn.addEventListener('click', () => huffmanController.buildFromText());
+    if (huffResetBtn)     huffResetBtn.addEventListener('click',     () => huffmanController.reset());
 
     // Mostrar menú principal al inicio
     showContainer(menuPrincipal);

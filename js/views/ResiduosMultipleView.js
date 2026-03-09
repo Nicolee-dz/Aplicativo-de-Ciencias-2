@@ -1,12 +1,4 @@
-/**
- * Vista D3 — Residuos Múltiples
- * - Todas las hojas quedan al MISMO nivel (profundidad = groupCount)
- * - Cada nodo puede tener hasta M = 2^n hijos
- * - Aristas con etiqueta de grupo (ej: "01", "10", "0")
- * - Nodos internos: círculo vacío
- * - Hojas: LETRA + binario
- * - Layout: espacio dividido en M partes iguales por nivel
- */
+
 class ResiduosMultipleView {
     constructor(containerId = 'residueTreeContainer') {
         this.container   = document.getElementById(containerId);
