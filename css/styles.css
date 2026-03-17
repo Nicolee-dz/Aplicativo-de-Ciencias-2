@@ -109,6 +109,10 @@ body {
     margin-top: 8px;
     gap: 8px;
     flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding-bottom: 40px;
 }
 
 .app-container .row {
@@ -988,3 +992,215 @@ hr {
 .bg-primary { background-color: #2563cc !important; }
 .bg-info    { background-color: #1a3f8a !important; }
 .bg-secondary { background-color: #8aa5c8 !important; }
+/* ═══════════════════════════════════════════════════════════
+   BÚSQUEDAS EXTERNAS — Estilos
+═══════════════════════════════════════════════════════════ */
+
+.ext-blocks-wrapper {
+    min-height: 200px;
+    max-height: 540px;
+    overflow-y: auto;
+    padding: 4px 2px;
+}
+
+.ext-empty-msg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #aaa;
+    font-size: 1rem;
+    gap: 10px;
+}
+.ext-empty-msg span { font-size: 2.5rem; }
+
+.ext-blocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 4px;
+}
+
+.ext-block-card {
+    border: 2px solid #cdd5e0;
+    border-radius: 10px;
+    background: #f8faff;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.ext-block-header {
+    background: #e8edf5;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.ext-block-label {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #2c3e50;
+}
+.ext-block-reading {
+    font-size: 0.72rem;
+    color: #e67e22;
+    font-weight: 600;
+    animation: pulse-text 0.8s infinite alternate;
+}
+.ext-block-checked {
+    font-size: 0.72rem;
+    color: #27ae60;
+    font-weight: 600;
+}
+.ext-block-found-badge {
+    font-size: 0.72rem;
+    color: #1a6b3a;
+    font-weight: 700;
+}
+@keyframes pulse-text {
+    from { opacity: 1; }
+    to   { opacity: 0.4; }
+}
+
+.ext-block-records {
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ext-record {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background: #fff;
+    border: 1px solid #e0e6f0;
+    transition: all 0.25s;
+}
+.ext-rec-idx {
+    width: 22px;
+    font-size: 0.72rem;
+    color: #888;
+    text-align: right;
+    flex-shrink: 0;
+}
+.ext-rec-val {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #2c3e50;
+}
+
+.ext-block-active {
+    border-color: #e67e22;
+    background: #fff8f0;
+    box-shadow: 0 4px 16px rgba(230,126,34,0.25);
+    transform: translateY(-2px);
+}
+.ext-block-active .ext-block-header { background: #fde8cc; }
+
+.ext-block-done {
+    border-color: #b0c4b1;
+    background: #f0f7f0;
+    opacity: 0.85;
+}
+.ext-block-done .ext-block-header { background: #d4ead4; }
+
+.ext-block-found {
+    border-color: #1a6b3a;
+    background: #e8f5ee;
+    box-shadow: 0 4px 18px rgba(26,107,58,0.3);
+    transform: translateY(-3px);
+}
+.ext-block-found .ext-block-header { background: #b8dfc7; }
+
+.ext-record-current {
+    background: #fff3cd !important;
+    border-color: #e67e22 !important;
+    animation: pulse-record 0.7s infinite alternate;
+}
+.ext-record-checked {
+    background: #f0f7f0 !important;
+    border-color: #b0c4b1 !important;
+    opacity: 0.8;
+}
+.ext-record-found {
+    background: #c8f0da !important;
+    border-color: #1a6b3a !important;
+    font-weight: 900;
+    box-shadow: 0 2px 8px rgba(26,107,58,0.3);
+}
+.ext-record-found .ext-rec-val { color: #0d3d22; }
+
+@keyframes pulse-record {
+    from { box-shadow: 0 0 0 rgba(230,126,34,0.5); }
+    to   { box-shadow: 0 0 8px rgba(230,126,34,0.8); }
+}
+
+.ext-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-around;
+}
+.ext-stat {
+    text-align: center;
+    flex: 1;
+    min-width: 55px;
+}
+.ext-stat-val {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+.ext-stat-lbl {
+    font-size: 0.75rem;
+    color: #7f8c8d;
+}
+
+.ext-search-counters {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 10px;
+}
+.ext-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f0f7ff;
+    border: 1px solid #cdd5e0;
+    border-radius: 10px;
+    padding: 10px 18px;
+    min-width: 100px;
+}
+.ext-counter-icon { font-size: 1.4rem; }
+.ext-counter-val {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    line-height: 1.1;
+}
+.ext-counter-lbl {
+    font-size: 0.75rem;
+    color: #7f8c8d;
+    text-align: center;
+}
+/* Binaria externa — bloque dentro del rango activo */
+.ext-block-inrange {
+    border-color: #7b9fd4;
+    background: #eef3fb;
+}
+.ext-block-inrange .ext-block-header { background: #d6e4f7; }
+
+.ext-block-range-badge {
+    font-size: 0.72rem;
+    color: #1a3f8a;
+    font-weight: 700;
+}

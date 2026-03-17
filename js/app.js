@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuPrincipal = document.getElementById('menu-principal');
     const submenuBusquedas = document.getElementById('submenu-busquedas');
     const appContainer = document.getElementById('app-container');
+    const appExternas  = document.getElementById('app-externas');
 
     const btnBusquedas = document.getElementById('btn-busquedas');
     const btnGrafos = document.getElementById('btn-grafos');
@@ -53,13 +54,29 @@ document.addEventListener('DOMContentLoaded', () => {
     residuosController.init();
     huffmanController.init();
 
+    // Búsqueda Secuencial Externa
+    const extSeqModel      = new ExternalSeqModel();
+    const extSeqView       = new ExternalSeqView();
+    const extSeqController = new ExternalSeqController(extSeqModel, extSeqView);
+    extSeqController.init();
+
+    // Búsqueda Binaria Externa
+    const extBinModel      = new ExternalBinModel();
+    const extBinView       = new ExternalBinView();
+    const extBinController = new ExternalBinController(extBinModel, extBinView);
+    extBinController.init();
+
     function showContainer(container) {
         console.log('Mostrando contenedor:', container.id);
-        [menuPrincipal, submenuBusquedas, appContainer].forEach(c => {
+        [menuPrincipal, submenuBusquedas, appContainer, appExternas].forEach(c => {
             if (c) {
-                c.style.display = (c === container)
-                    ? 'flex'
-                    : 'none';
+                if (c !== container) {
+                    c.style.display = 'none';
+                } else if (c === appExternas || c === appContainer) {
+                    c.style.display = 'block';
+                } else {
+                    c.style.display = 'flex';
+                }
             }
         });
     }
@@ -93,8 +110,203 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnExternas) {
         btnExternas.addEventListener('click', () => {
-            alert('Búsquedas Externas: en desarrollo.');
+            showContainer(appExternas);
         });
+    }
+
+    // Volver al submenú desde Externas
+    const volverSubmenuExt = document.getElementById('volver-submenu-ext');
+    if (volverSubmenuExt) {
+        volverSubmenuExt.addEventListener('click', () => {
+            showContainer(submenuBusquedas);
+        });
+    }
+
+    // ── Eventos Búsqueda Secuencial Externa ───────────────
+    const extSeqApplyBlockBtn = document.getElementById('extSeqApplyBlockBtn');
+    const extSeqInsertBtn     = document.getElementById('extSeqInsertBtn');
+    const extSeqRemoveBtn     = document.getElementById('extSeqRemoveBtn');
+    const extSeqSearchBtn     = document.getElementById('extSeqSearchBtn');
+    const extSeqResetBtn      = document.getElementById('extSeqResetBtn');
+    const extSeqSaveBtn       = document.getElementById('extSeqSaveBtn');
+    const extSeqRecoverBtn    = document.getElementById('extSeqRecoverBtn');
+    const extSeqPrintBtn      = document.getElementById('extSeqPrintBtn');
+    const extSeqPdfInput      = document.getElementById('extSeqPdfInput');
+
+    if (extSeqApplyBlockBtn) {
+        extSeqApplyBlockBtn.addEventListener('click', () => {
+            const size = document.getElementById('extSeqBlockSize').value;
+            extSeqController.applyBlockSize(size);
+        });
+    }
+    if (extSeqInsertBtn) {
+        extSeqInsertBtn.addEventListener('click', () => {
+            const val    = document.getElementById('extSeqKeyVal').value;
+            const range  = parseInt(document.getElementById('extSeqRange').value) || 10;
+            const digits = parseInt(document.getElementById('extSeqDigits').value) || 3;
+            if (extSeqModel.records.length >= range) {
+                showNotification(`Rango máximo alcanzado (${range} claves)`, 'error');
+                return;
+            }
+            if (String(Math.abs(parseInt(val))).length !== digits) {
+                showNotification(`La clave debe tener exactamente ${digits} dígito(s)`, 'error');
+                return;
+            }
+            extSeqController.insert(val);
+            document.getElementById('extSeqKeyVal').value = '';
+        });
+    }
+
+    // Enter en el input inserta automáticamente
+    const extSeqKeyValInput = document.getElementById('extSeqKeyVal');
+    if (extSeqKeyValInput) {
+        extSeqKeyValInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const val    = extSeqKeyValInput.value;
+                const range  = parseInt(document.getElementById('extSeqRange').value) || 10;
+                const digits = parseInt(document.getElementById('extSeqDigits').value) || 3;
+                if (extSeqModel.records.length >= range) {
+                    showNotification(`Rango máximo alcanzado (${range} claves)`, 'error');
+                    return;
+                }
+                if (String(Math.abs(parseInt(val))).length !== digits) {
+                    showNotification(`La clave debe tener exactamente ${digits} dígito(s)`, 'error');
+                    return;
+                }
+                extSeqController.insert(val);
+                extSeqKeyValInput.value = '';
+            }
+        });
+    }
+    if (extSeqRemoveBtn) {
+        extSeqRemoveBtn.addEventListener('click', () => {
+            const val = document.getElementById('extSeqKeyVal').value;
+            extSeqController.remove(val);
+            document.getElementById('extSeqKeyVal').value = '';
+        });
+    }
+    if (extSeqSearchBtn) {
+        extSeqSearchBtn.addEventListener('click', () => {
+            const val = document.getElementById('extSeqKeyVal').value;
+            extSeqController.search(val);
+        });
+    }
+    if (extSeqResetBtn) {
+        extSeqResetBtn.addEventListener('click', () => {
+            extSeqController.reset();
+            document.getElementById('extSeqKeyVal').value = '';
+        });
+    }
+    if (extSeqSaveBtn) {
+        extSeqSaveBtn.addEventListener('click', () => extSeqController.save());
+    }
+    if (extSeqRecoverBtn && extSeqPdfInput) {
+        extSeqRecoverBtn.addEventListener('click', () => {
+            extSeqPdfInput.value = '';
+            extSeqPdfInput.click();
+        });
+        extSeqPdfInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) extSeqController.recover(file);
+        });
+    }
+    if (extSeqPrintBtn) {
+        extSeqPrintBtn.addEventListener('click', () => extSeqController.print());
+    }
+
+    // ── Eventos Búsqueda Binaria Externa ─────────────────
+    const extBinApplyBlockBtn = document.getElementById('extBinApplyBlockBtn');
+    const extBinInsertBtn     = document.getElementById('extBinInsertBtn');
+    const extBinRemoveBtn     = document.getElementById('extBinRemoveBtn');
+    const extBinSearchBtn     = document.getElementById('extBinSearchBtn');
+    const extBinResetBtn      = document.getElementById('extBinResetBtn');
+    const extBinSaveBtn       = document.getElementById('extBinSaveBtn');
+    const extBinRecoverBtn    = document.getElementById('extBinRecoverBtn');
+    const extBinPrintBtn      = document.getElementById('extBinPrintBtn');
+    const extBinPdfInput      = document.getElementById('extBinPdfInput');
+
+    if (extBinApplyBlockBtn) {
+        extBinApplyBlockBtn.addEventListener('click', () => {
+            const size = document.getElementById('extBinBlockSize').value;
+            extBinController.applyBlockSize(size);
+        });
+    }
+    if (extBinInsertBtn) {
+        extBinInsertBtn.addEventListener('click', () => {
+            const val    = document.getElementById('extBinKeyVal').value;
+            const range  = parseInt(document.getElementById('extBinRange').value) || 10;
+            const digits = parseInt(document.getElementById('extBinDigits').value) || 3;
+            if (extBinModel.records.length >= range) {
+                showNotification(`Rango máximo alcanzado (${range} claves)`, 'error');
+                return;
+            }
+            if (String(Math.abs(parseInt(val))).length !== digits) {
+                showNotification(`La clave debe tener exactamente ${digits} dígito(s)`, 'error');
+                return;
+            }
+            extBinController.insert(val);
+            document.getElementById('extBinKeyVal').value = '';
+        });
+    }
+
+    // Enter en el input inserta automáticamente
+    const extBinKeyValInput = document.getElementById('extBinKeyVal');
+    if (extBinKeyValInput) {
+        extBinKeyValInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const val    = extBinKeyValInput.value;
+                const range  = parseInt(document.getElementById('extBinRange').value) || 10;
+                const digits = parseInt(document.getElementById('extBinDigits').value) || 3;
+                if (extBinModel.records.length >= range) {
+                    showNotification(`Rango máximo alcanzado (${range} claves)`, 'error');
+                    return;
+                }
+                if (String(Math.abs(parseInt(val))).length !== digits) {
+                    showNotification(`La clave debe tener exactamente ${digits} dígito(s)`, 'error');
+                    return;
+                }
+                extBinController.insert(val);
+                extBinKeyValInput.value = '';
+            }
+        });
+    }
+
+    if (extBinRemoveBtn) {
+        extBinRemoveBtn.addEventListener('click', () => {
+            const val = document.getElementById('extBinKeyVal').value;
+            extBinController.remove(val);
+            document.getElementById('extBinKeyVal').value = '';
+        });
+    }
+    if (extBinSearchBtn) {
+        extBinSearchBtn.addEventListener('click', () => {
+            const val = document.getElementById('extBinKeyVal').value;
+            extBinController.search(val);
+        });
+    }
+    if (extBinResetBtn) {
+        extBinResetBtn.addEventListener('click', () => {
+            extBinController.reset();
+            document.getElementById('extBinKeyVal').value = '';
+        });
+    }
+    if (extBinSaveBtn) {
+        extBinSaveBtn.addEventListener('click', () => extBinController.save());
+    }
+    if (extBinRecoverBtn && extBinPdfInput) {
+        extBinRecoverBtn.addEventListener('click', () => {
+            extBinPdfInput.value = '';
+            extBinPdfInput.click();
+        });
+        extBinPdfInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) extBinController.recover(file);
+        });
+    }
+    if (extBinPrintBtn) {
+        extBinPrintBtn.addEventListener('click', () => extBinController.print());
     }
 
     if (volverMenuPrincipal) {

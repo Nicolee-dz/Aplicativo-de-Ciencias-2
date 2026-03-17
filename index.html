@@ -68,13 +68,14 @@
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-8 col-10">
-                        <div id="btn-externas" class="card menu-card shadow disabled">
+                        <div id="btn-externas" class="card menu-card shadow">
                             <div class="card-body">
                                 <div class="menu-icon">💾</div>
                                 <h3 class="menu-title">Búsquedas Externas</h3>
-                                <p class="menu-description">Manejo de archivos, índices y búsqueda en disco</p>
+                                <p class="menu-description">Búsqueda sobre archivos en disco, organizados en bloques de registros.</p>
                                 <div class="menu-badges">
-                                    <span class="badge bg-secondary">Próximamente</span>
+                                    <span class="badge bg-primary">Secuencial</span>
+                                    <span class="badge bg-secondary">Binaria (pronto)</span>
                                 </div>
                             </div>
                         </div>
@@ -443,7 +444,212 @@
                 <small class="text-muted">Desarrollado con fines educativos</small>
             </footer>
         </div>
-    </div>
+
+
+        <!-- ════════════════════════════════════════════════════
+             APLICATIVO DE BÚSQUEDAS EXTERNAS
+        ════════════════════════════════════════════════════ -->
+        <div id="app-externas" class="app-container" style="display:none;">
+        <button id="volver-submenu-ext" class="btn back-to-menu text-white">
+            ← Volver al menú de búsquedas
+        </button>
+
+        <div class="app-header">
+            <h1>Búsquedas Externas</h1>
+            <p class="lead mb-0">La búsqueda externa opera sobre <strong>archivos en disco</strong> divididos en
+                <strong>bloques de registros</strong>. La unidad de costo es la <strong>lectura de bloque</strong>
+                (no la comparación individual), ya que acceder al disco es miles de veces más lento que la RAM.</p>
+        </div>
+
+        <ul class="nav nav-tabs" id="extTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="ext-seq-tab"
+                    data-bs-toggle="tab" data-bs-target="#ext-sequential"
+                    type="button" role="tab">Secuencial</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ext-bin-tab"
+                    data-bs-toggle="tab" data-bs-target="#ext-binary"
+                    type="button" role="tab">Binaria</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="extTabsContent">
+
+            <!-- Pestaña Secuencial -->
+            <div class="tab-pane fade show active" id="ext-sequential" role="tabpanel">
+                <div class="row g-3 mt-1">
+
+                    <!-- Columna izquierda: controles -->
+                    <div class="col-lg-4 col-md-5">
+                        <div class="section">
+                            <h2>Configuración</h2>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Claves por bloque:</label>
+                                <div class="d-flex gap-2">
+                                    <input type="number" id="extSeqBlockSize" min="2" max="10" value="4"
+                                        class="form-control form-control-lg">
+                                    <button id="extSeqApplyBlockBtn" class="btn btn-secondary">Aplicar</button>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Rango (cantidad de claves):</label>
+                                <input type="number" id="extSeqRange" min="1" value="10"
+                                    class="form-control form-control-lg" placeholder="Ej: 20">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Dígitos por clave:</label>
+                                <input type="number" id="extSeqDigits" min="1" max="10" value="3"
+                                    class="form-control form-control-lg" placeholder="Ej: 3">
+                            </div>
+
+                            <hr>
+
+                            <label class="form-label fw-bold">Clave:</label>
+                            <div class="d-flex gap-2 mb-2">
+                                <input type="number" id="extSeqKeyVal" class="form-control form-control-lg">
+                                <button id="extSeqInsertBtn" class="btn btn-success">Insertar</button>
+                            </div>
+                            <div class="d-flex gap-2 mb-1">
+                                <button id="extSeqSearchBtn" class="search-btn flex-fill">Buscar</button>
+                                <button id="extSeqRemoveBtn" class="btn-delete-char flex-fill">Eliminar</button>
+                            </div>
+
+                            <hr>
+
+                            <label class="form-label fw-bold">Acciones</label>
+                            <button id="extSeqSaveBtn"    class="btn-save-array w-100 mt-2">Guardar archivo (PDF)</button>
+                            <button id="extSeqRecoverBtn" class="btn-recover-array w-100 mt-2">Recuperar archivo</button>
+                            <button id="extSeqPrintBtn"   class="btn-print-array w-100 mt-2">Imprimir</button>
+                            <input type="file" id="extSeqPdfInput" accept=".pdf" style="display:none;">
+                            <button id="extSeqResetBtn"   class="reset-btn w-100 mt-2">Reiniciar archivo</button>
+
+                            <!-- Resultado de búsqueda — debajo de acciones -->
+                            <div class="mt-3" id="extSeqStepInfo" style="display:none;">
+                                <hr>
+                                <h3>Resultado de búsqueda</h3>
+                                <p id="extSeqStepDesc" class="mb-2"></p>
+                                <div class="d-flex gap-4">
+                                    <div>
+                                        <strong>Bloques leídos:</strong>
+                                        <span id="extSeqBlockReads" class="badge bg-primary ms-1">0</span>
+                                    </div>
+                                    <div>
+                                        <strong>Comparaciones:</strong>
+                                        <span id="extSeqComparisons" class="badge bg-primary ms-1">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /col izquierda -->
+
+                    <!-- Columna derecha: bloques -->
+                    <div class="col-lg-8 col-md-7">
+                        <div class="section">
+                            <h2>Archivo en disco — Vista de bloques</h2>
+                            <div id="extSeqBlocksContainer" class="ext-blocks-wrapper"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /tab secuencial -->
+
+            <!-- Pestaña Binaria -->
+            <div class="tab-pane fade" id="ext-binary" role="tabpanel">
+                <div class="row g-3 mt-1">
+
+                    <!-- Columna izquierda: controles -->
+                    <div class="col-lg-4 col-md-5">
+                        <div class="section">
+                            <h2>Configuración</h2>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Claves por bloque:</label>
+                                <div class="d-flex gap-2">
+                                    <input type="number" id="extBinBlockSize" min="2" max="10" value="4"
+                                        class="form-control form-control-lg">
+                                    <button id="extBinApplyBlockBtn" class="btn btn-secondary">Aplicar</button>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Rango (cantidad de claves):</label>
+                                <input type="number" id="extBinRange" min="1" value="10"
+                                    class="form-control form-control-lg" placeholder="Ej: 20">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Dígitos por clave:</label>
+                                <input type="number" id="extBinDigits" min="1" max="10" value="3"
+                                    class="form-control form-control-lg" placeholder="Ej: 3">
+
+                            </div>
+
+                            <hr>
+
+                            <label class="form-label fw-bold">Clave:</label>
+                            <div class="d-flex gap-2 mb-2">
+                                <input type="number" id="extBinKeyVal" class="form-control form-control-lg">
+                                <button id="extBinInsertBtn" class="btn btn-success">Insertar</button>
+                            </div>
+                            <div class="d-flex gap-2 mb-1">
+                                <button id="extBinSearchBtn" class="search-btn flex-fill">Buscar</button>
+                                <button id="extBinRemoveBtn" class="btn-delete-char flex-fill">Eliminar</button>
+                            </div>
+
+                            <hr>
+
+                            <label class="form-label fw-bold">Acciones</label>
+                            <button id="extBinSaveBtn"    class="btn-save-array w-100 mt-2">Guardar archivo (PDF)</button>
+                            <button id="extBinRecoverBtn" class="btn-recover-array w-100 mt-2">Recuperar archivo</button>
+                            <button id="extBinPrintBtn"   class="btn-print-array w-100 mt-2">Imprimir</button>
+                            <input type="file" id="extBinPdfInput" accept=".pdf" style="display:none;">
+                            <button id="extBinResetBtn"   class="reset-btn w-100 mt-2">Reiniciar archivo</button>
+
+                            <!-- Resultado de búsqueda -->
+                            <div class="mt-3" id="extBinStepInfo" style="display:none;">
+                                <hr>
+                                <h3>Resultado de búsqueda</h3>
+                                <p id="extBinStepDesc" class="mb-2"></p>
+                                <div class="d-flex gap-4">
+                                    <div>
+                                        <strong>Bloques leídos:</strong>
+                                        <span id="extBinBlockReads" class="badge bg-primary ms-1">0</span>
+                                    </div>
+                                    <div>
+                                        <strong>Comparaciones:</strong>
+                                        <span id="extBinComparisons" class="badge bg-primary ms-1">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /col izquierda -->
+
+                    <!-- Columna derecha: bloques -->
+                    <div class="col-lg-8 col-md-7">
+                        <div class="section">
+                            <h2>Archivo en disco — Vista de bloques</h2>
+                            <div id="extBinBlocksContainer" class="ext-blocks-wrapper"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /tab binaria -->
+
+        </div><!-- /tab-content -->
+
+        <footer class="text-center mt-5 pt-4 border-top">
+            <p class="text-muted mb-0">Aplicativo - Ciencias de la Computación 2</p>
+            <small class="text-muted">Desarrollado con fines educativos</small>
+        </footer>
+        </div><!-- /app-externas -->
+
+    </div><!-- /main-container -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -468,6 +674,12 @@
     <script src="js/controllers/TriesController.js"></script>
     <script src="js/controllers/ResiduosMultipleController.js"></script>
     <script src="js/controllers/HuffmanController.js"></script>
+    <script src="js/models/ExternalSeqModel.js"></script>
+    <script src="js/views/ExternalSeqView.js"></script>
+    <script src="js/controllers/ExternalSeqController.js"></script>
+    <script src="js/models/ExternalBinModel.js"></script>
+    <script src="js/views/ExternalBinView.js"></script>
+    <script src="js/controllers/ExternalBinController.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
