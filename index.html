@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciencias de la Computación 2 - Búsquedas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Menú Principal -->
+        <div id="menu-principal" class="menu-container">
+            <div class="text-center w-100">
+                <h1 class="mb-5 fw-bold text-primary">Ciencias de la Computación 2</h1>
+                <div class="row justify-content-center g-4">
+                    <div class="col-lg-4 col-md-6 col-sm-8 col-10">
+                        <div id="btn-busquedas" class="card menu-card shadow">
+                            <div class="card-body">
+                                <div class="menu-icon">🔍</div>
+                                <h2 class="menu-title">Búsquedas</h2>
+                                <p class="menu-description">Algoritmos de búsqueda interna y externa</p>
+                                <div class="menu-badges">
+                                    <span class="badge bg-primary">Internas</span>
+                                    <span class="badge bg-success">Externas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-8 col-10">
+                        <div id="btn-grafos" class="card menu-card shadow">
+                            <div class="card-body">
+                                <div class="menu-icon">🕸️</div>
+                                <h2 class="menu-title">Grafos</h2>
+                                <p class="menu-description">Visualización y operaciones entre grafos</p>
+                                <div class="menu-badges">
+                                    <span class="badge bg-primary">Operaciones</span>
+                                    <span class="badge bg-success">Arboles</span>
+                                    <span class="badge bg-info">Algoritmos</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submenú de Búsquedas -->
+        <div id="submenu-busquedas" class="menu-container" style="display: none;">
+            <div class="text-center w-100">
+                <button class="btn btn-secondary mb-4" id="volver-menu-principal">← Volver al menú principal</button>
+                <h2 class="mb-4">Selecciona el tipo de búsqueda</h2>
+                <div class="row justify-content-center g-4">
+                    <div class="col-lg-4 col-md-6 col-sm-8 col-10">
+                        <div id="btn-internas" class="card menu-card shadow">
+                            <div class="card-body">
+                                <div class="menu-icon">📊</div>
+                                <h3 class="menu-title">Búsquedas Internas</h3>
+                                <p class="menu-description">Localización de un elemento específico dentro de una estructura de datos.</p>
+                                <div class="menu-badges">
+                                    <span class="badge bg-primary">Secuencial</span>
+                                    <span class="badge bg-success">Binaria</span>
+                                    <span class="badge bg-info">Hash</span>
+                                    <span class="badge bg-primary">Árboles Digitales</span>
+                                    <span class="badge bg-success">TRIES</span>
+                                    <span class="badge bg-info">Residuos Múltiples</span>
+                                    <span class="badge bg-secondary">Árboles de Huffman</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-8 col-10">
+                        <div id="btn-externas" class="card menu-card shadow">
+                            <div class="card-body">
+                                <div class="menu-icon">💾</div>
+                                <h3 class="menu-title">Búsquedas Externas</h3>
+                                <p class="menu-description">Búsqueda sobre archivos en disco, organizados en bloques de registros.</p>
+                                <div class="menu-badges">
+                                    <span class="badge bg-primary">Secuencial</span>
+                                    <span class="badge bg-secondary">Binaria (pronto)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submenú de Grafos -->
+        <div id="submenu-grafos" class="menu-container" style="display: none;">
+            <div class="text-center w-100">
+                <button class="btn btn-secondary mb-4" id="volver-menu-principal-desde-grafos">← Volver al menú principal</button>
+                <h2 class="mb-4">Selecciona el módulo de Grafos</h2>
+                <div class="row justify-content-center g-4">
+                    <div class="col-lg-3 col-md-5 col-sm-8 col-10">
+                        <div id="btn-grafos-operaciones" class="card menu-card shadow">
+                            <div class="card-body">
+                                <h3 class="menu-title">Operaciones</h3>
+                                <p class="menu-description">Realiza diferentes operaciones entre grafos.</p>
+                                <div class="menu-badges">
+                                    <span class="badge bg-primary">Unión</span>
+                                    <span class="badge bg-success">Intersección</span>
+                                    <span class="badge bg-info">Complemento</span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-5 col-sm-8 col-10">
+                        <div id="btn-grafos-arboles" class="card menu-card shadow">
+                            <div class="card-body">
+                                <h3 class="menu-title">Árboles</h3>
+                                <p class="menu-description">Centro, árboles de expansión mínima y máxima, y distancia entre árboles.</p>
+                                <div class="menu-badges">
+                                    <span class="badge bg-primary">Expansión Mínima y Máxima</span>
+                                    <span class="badge bg-info">Centro / Bicentro</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-5 col-sm-8 col-10">
+                        <div id="btn-grafos-algoritmos" class="card menu-card shadow">
+                            <div class="card-body">
+                                <h3 class="menu-title">Algoritmos</h3>
+                                <p class="menu-description">Camino más corto en un grafo</p>
+                                <div class="menu-badges">
+                                    <span class="badge bg-primary">Funcion ordinal</span>
+                                    <span class="badge bg-info">Bellman</span>
+                                    <span class="badge bg-info">Dijkstra</span>
+                                    <span class="badge bg-info">Floyd</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-5 col-sm-8 col-10">
+                        <div id="btn-grafos-matrices" class="card menu-card shadow">
+                            <div class="card-body">
+                                <h3 class="menu-title">Matrices</h3>
+                                <p class="menu-description">Representación matricial de grafos</p>
+                                <div class="menu-badges">
+                                    <span class="badge bg-primary">Matriz de Adyacencia</span>
+                                     <span class="badge bg-info">Matriz de Incidencia</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aplicativo de Búsquedas Internas -->
+        <div id="app-container" class="app-container" style="display: none;">
+            <button id="volver-submenu" class="btn back-to-menu text-white">
+                ← Volver al menú de búsquedas
+            </button>
+
+            <div class="app-header">
+                <h1>Búsquedas Internas</h1>
+                <p class="lead mb-0">Es el proceso de localización de un registro o llave específica dentro de una estructura de datos que reside íntegramente en la memoria principal (RAM). Se caracteriza por su alta velocidad de acceso y se aplica sobre arreglos, listas o tablas mediante métodos comparativos o por transformación de llaves".</p>
+            </div>
+
+            <!-- Pestañas de métodos -->
+            <ul class="nav nav-tabs" id="methodTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="sequential-tab" data-bs-toggle="tab" data-bs-target="#sequential" type="button" role="tab">Secuencial</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="binary-tab" data-bs-toggle="tab" data-bs-target="#binary" type="button" role="tab">Binaria</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="hash-tab" data-bs-toggle="tab" data-bs-target="#hash" type="button" role="tab">Hash</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="digital-tab" data-bs-toggle="tab" data-bs-target="#digital" type="button" role="tab">Árboles digitales</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tries-tab" data-bs-toggle="tab" data-bs-target="#tries" type="button" role="tab">TRIES</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="residue-tab" data-bs-toggle="tab" data-bs-target="#residuemultiple" type="button" role="tab">Residuos Múltiples</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="huffman-tab" data-bs-toggle="tab" data-bs-target="#huffman" type="button" role="tab">Árboles de Huffman</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="methodTabsContent">
+                <!-- Pestaña Secuencial -->
+                <div class="tab-pane fade show active" id="sequential" role="tabpanel">
+                    <div class="row g-4"></div>
+                </div>
+
+                <!-- Pestaña Binaria -->
+                <div class="tab-pane fade" id="binary" role="tabpanel">
+                    <div class="row g-4"></div>
+                </div>
+
+                <!-- Pestaña Hash -->
+                <div class="tab-pane fade" id="hash" role="tabpanel">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="section h-100">
+                                <h2>Configuración Hash</h2>
+                                <div class="input-group">
+                                    <label for="hashSize">Tamaño de la tabla (máx. 100):</label>
+                                    <input type="number" id="hashSize" min="1" max="100" value="10" class="form-control form-control-lg">
+                                </div>
+                                <div class="input-group">
+                                    <label for="hashFunction">Función hash:</label>
+                                    <select id="hashFunction" class="form-select form-select-lg">
+                                        <option value="division">División (clave % tamaño)</option>
+                                        <option value="multiplication">Multiplicación</option>
+                                        <option value="folding">Plegamiento (suma de dígitos)</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label for="hashCollision">Método de resolución de colisiones:</label>
+                                    <select id="hashCollision" class="form-select form-select-lg">
+                                        <option value="linear">Sondeo lineal</option>
+                                        <option value="quadratic">Sondeo cuadrático</option>
+                                        <option value="double">Doble hash</option>
+                                    </select>
+                                </div>
+                                <!-- Descripción de la función hash -->
+                                <div id="hashFunctionDesc" class="alert alert-info mt-2 py-2">
+                                    <small>Selecciona una función hash para ver su explicación.</small>
+                                </div>
+
+                                <!-- Descripción del método de colisión -->
+                                <div id="hashCollisionDesc" class="alert alert-info mt-2 py-2">
+                                    <small>Selecciona un método de resolución de colisiones para ver su explicación.</small>
+                                </div>
+                                <div class="input-group">
+                                    <label for="hashDigits">Dígitos exactos de la clave:</label>
+                                    <input type="number" id="hashDigits" min="1" max="10" value="3" class="form-control form-control-lg">
+                                </div>
+                                <div class="input-group">
+                                    <label for="hashKey">Clave:</label>
+                                    <input type="number" id="hashKey" class="form-control form-control-lg" placeholder="Valor a insertar/buscar">
+                                </div>
+                                <div class="button-group">
+                                    <button class="btn btn-primary" id="hashInsertBtn">Insertar</button>
+                                    <button class="search-btn" id="hashSearchBtn">Buscar</button>
+                                </div>
+                                <button class="reset-btn w-100 mt-2" id="hashResetBtn">Reiniciar tabla</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="section h-100">
+                                <h2>Visualización Tabla Hash</h2>
+                                <div id="hashTableContainer"></div>
+                                <div id="hashStepInfo" class="step-info" style="display: none;">
+                                    <p id="hashStepDescription"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña Árboles Digitales -->
+                <div class="tab-pane fade" id="digital" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-lg-5 col-md-6">
+                            <div class="section">
+                                <h2>Árbol Digital - Configuración</h2>
+                                <div class="input-group">
+                                    <label for="digitalWord">Clave:</label>
+                                    <input type="text" id="digitalWord" class="form-control" placeholder="Ingresa una clave">
+                                </div>
+                                <div class="button-group">
+                                    <button class="btn btn-primary" id="digitalInsertBtn">Insertar</button>
+                                    <button class="btn-delete-char" id="digitalDeleteBtn">Eliminar</button>
+                                    <button class="search-btn" id="digitalSearchBtn">Buscar</button>
+                                </div>
+                                <button class="reset-btn w-100 mt-2" id="digitalResetBtn">Reiniciar Árbol</button>
+                                <div id="digitalStepInfo" class="step-info mt-3" style="display:none;">
+                                    <p id="digitalStepDescription"></p>
+                                </div>
+                            </div>
+                            <div class="section mt-2">
+                                <h3>Registro de Caracteres</h3>
+                                <table class="table table-striped table-sm" id="digitalCharTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Clave</th>
+                                            <th>ABC</th>
+                                            <th>Dígitos Binarios</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="digitalCharTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-6">
+                            <div class="section tree-section-full">
+                                <h2>Visualización del Árbol</h2>
+                                <div id="digitalTreeContainer" class="digital-tree-scroll"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña TRIES -->
+                <div class="tab-pane fade" id="tries" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-lg-5 col-md-6">
+                            <div class="section">
+                                <h2>TRIES - Configuración</h2>
+                                <div class="input-group">
+                                    <label for="triesWord">Clave:</label>
+                                    <input type="text" id="triesWord" class="form-control" placeholder="Ingresa una clave">
+                                </div>
+                                <div class="button-group">
+                                    <button class="btn btn-primary" id="triesInsertBtn">Insertar</button>
+                                    <button class="btn-delete-char" id="triesDeleteBtn">Eliminar</button>
+                                    <button class="search-btn" id="triesSearchBtn">Buscar</button>
+                                </div>
+                                <button class="reset-btn w-100 mt-2" id="triesResetBtn">Reiniciar Árbol</button>
+                                <div id="triesStepInfo" class="step-info mt-3" style="display:none;">
+                                    <p id="triesStepDescription"></p>
+                                </div>
+                            </div>
+                            <div class="section mt-2">
+                                <h3>Registro de Caracteres</h3>
+                                <table class="table table-striped table-sm" id="triesCharTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Clave</th>
+                                            <th>ABC</th>
+                                            <th>Dígitos Binarios</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="triesCharTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-6">
+                            <div class="section tree-section-full">
+                                <h2>Visualización del Árbol</h2>
+                                <div id="triesTreeContainer" class="digital-tree-scroll"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pestaña Residuos Múltiples -->
+                <div class="tab-pane fade" id="residuemultiple" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-lg-5 col-md-6">
+                            <div class="section">
+                                <h2>Residuos Múltiples - Configuración</h2>
+
+                                <!-- Selector de n -->
+                                <div class="input-group">
+                                    <label for="residueN">Valor de n (M = 2<sup>n</sup> hijos por nodo):</label>
+                                    <select id="residueN" class="form-select">
+                                        <option value="2" selected>n=2 → M=4 hijos | 3 niveles</option>
+                                        <option value="3">n=3 → M=8 hijos | 2 niveles</option>
+                                        <option value="4">n=4 → M=16 hijos | 2 niveles</option>
+                                        <option value="5">n=5 → M=32 hijos | 1 nivel</option>
+                                    </select>
+                                </div>
+                                <div id="residueNInfo" class="alert alert-info py-2 mb-2">
+                                    <strong>n = 2</strong> → <strong>M = 2<sup>2</sup> = 4</strong> hijos por nodo<br>
+                                    <small>Códigos posibles: 00, 01, 10, 11</small>
+                                </div>
+                                <button class="btn btn-secondary w-100 mb-3" id="residueChangeNBtn">Aplicar n (reinicia el árbol)</button>
+                                <hr>
+
+                                <div class="input-group">
+                                    <label for="residueWord">Clave:</label>
+                                    <input type="text" id="residueWord" class="form-control" placeholder="Ingresa una clave">
+                                </div>
+                                <div class="button-group">
+                                    <button class="btn btn-primary" id="residueInsertBtn">Insertar</button>
+                                    <button class="btn-delete-char" id="residueDeleteBtn">Eliminar</button>
+                                    <button class="search-btn" id="residueSearchBtn">Buscar</button>
+                                </div>
+                                <button class="reset-btn w-100 mt-2" id="residueResetBtn">Reiniciar Árbol</button>
+                            </div>
+                            <div class="section mt-2">
+                                <h3>Registro de Caracteres</h3>
+                                <table class="table table-striped table-sm" id="residueKeyTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Clave</th>
+                                            <th>ABC</th>
+                                            <th>Binario</th>
+                                            <th>Grupos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="residueKeyTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-6">
+                            <div class="section tree-section-full">
+                                <h2>Visualización del Árbol</h2>
+                                <div id="residueTreeContainer" class="digital-tree-scroll"></div>
+                                <div id="residueStepInfo" class="step-info mt-3" style="display:none;">
+                                    <p id="residueStepDescription"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pestaña Huffman -->
+                <div class="tab-pane fade" id="huffman" role="tabpanel">
+
+                    <!-- Fila superior: controles izq + árbol der -->
+                    <div class="row g-4">
+                        <!-- Izquierda: entrada + stats + tabla de códigos -->
+                        <div class="col-md-5">
+                            <div class="section">
+                                <h2>Árbol de Huffman</h2>
+                                <div class="input-group">
+                                    <label for="huffTextInput">Texto:</label>
+                                    <textarea id="huffTextInput" class="form-control" rows="2" placeholder="Ej: HOLA MUNDO"></textarea>
+                                </div>
+                                <div class="d-flex gap-2 mt-2">
+                                    <button class="btn btn-primary flex-fill" id="huffBuildTextBtn">Construir árbol</button>
+                                    <button class="reset-btn flex-fill" id="huffResetBtn">Reiniciar</button>
+                                </div>
+                            </div>
+
+                            <!-- Tabla final de códigos -->
+                            <div class="section mt-3">
+                                <h3>Tabla de Códigos</h3>
+                                <table class="table table-striped table-sm huffman-final-table">
+                                    <thead class="table-light">
+                                        <tr><th>Carácter</th><th>Fr</th><th>Binario</th><th>Li</th><th>L= ΣFr·Li</th></tr>
+                                    </thead>
+                                    <tbody id="huffmanCodesBody"></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <!-- Derecha: árbol -->
+                        <div class="col-md-7">
+                            <div class="section">
+                                <h2>Visualización del Árbol</h2>
+                                <div id="huffmanTreeContainer" class="digital-tree-scroll" style="height:600px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tablas de construcción: 3 tablas por fila -->
+                    <div class="row g-4 mt-1">
+                        <div class="col-12">
+                            <div class="section">
+                                <h3>Fuentes de información reducida: </h3>
+                                <div id="huffmanStepsContainer" class="huff-steps-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- fin tab-content -->
+
+            <!-- Área de trabajo de arreglos (visible solo en Secuencial/Binaria) -->
+            <div class="row g-3 mt-1" id="array-workspace">
+                <div class="col-lg-5 col-md-6">
+                    <div class="section" id="data-config-section">
+                        <h2>Construcción del Arreglo</h2>
+                        <p class="text-muted mb-2">El arreglo inicia vacío. Agrega valores uno por uno.</p>
+
+                        <div class="mb-2">
+                            <label for="arrayRange" class="form-label fw-bold">Rango (cantidad de claves):</label>
+                            <input type="number" id="arrayRange" min="1" max="10000" value="150" class="form-control form-control-lg">
+                            <small class="text-muted">El arreglo tendrá como máximo esta cantidad exacta de claves.</small>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="arrayDigits" class="form-label fw-bold">Dígitos exactos de los valores:</label>
+                            <input type="number" id="arrayDigits" min="1" max="10" value="3" class="form-control form-control-lg">
+                            <small class="text-muted">Los valores deben tener esta cantidad de dígitos.</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="addSingleValue" class="form-label fw-bold">Clave:</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <input type="number" id="addSingleValue" class="form-control form-control-lg" placeholder="Ingresa un número">
+                                <button id="addSingleBtn" class="btn btn-success">Insertar</button>
+                                <button id="searchSingleBtn" class="search-btn">Buscar</button>
+                            </div>
+                            <small class="text-muted">No se permiten duplicados. Respeta el rango configurado.</small>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="form-label fw-bold">Acciones rápidas</label>
+                            <button class="reset-btn w-100 mt-2" id="resetSearchBtn">Reiniciar Búsqueda</button>
+                            <button class="btn-save-array w-100 mt-2" id="saveArrayBtn">Guardar Arreglo (PDF)</button>
+                            <button class="btn-recover-array w-100 mt-2" id="recoverArrayBtn">Recuperar Arreglo</button>
+                            <button class="btn-print-array w-100 mt-2" id="printArrayBtn">Imprimir</button>
+                            <input type="file" id="pdfFileInput" accept=".pdf" style="display:none;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7 col-md-6">
+                    <div class="section" id="array-visual-section">
+                        <h2>Visualización del Arreglo</h2>
+                        <div id="arrayContainer"></div>
+                        <div id="stepInfo" class="step-info" style="display: none;">
+                            <h3>Paso a paso:</h3>
+                            <p id="stepDescription"></p>
+                            <p><strong>Comparaciones:</strong> <span id="comparisons" class="badge bg-primary">0</span></p>
+                        </div>
+                        <div class="array-stats mt-2">
+                            <div class="stat"><span class="stat-value" id="arrayLength">0</span><div class="stat-label">Elementos</div></div>
+                            <div class="stat"><span class="stat-value" id="arrayMin">-</span><div class="stat-label">Mínimo</div></div>
+                            <div class="stat"><span class="stat-value" id="arrayMax">-</span><div class="stat-label">Máximo</div></div>
+                            <div class="stat"><span class="stat-value" id="arraySum">0</span><div class="stat-label">Suma</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="text-center mt-5 pt-4 border-top">
+                <p class="text-muted mb-0">Aplicativo - Ciencias de la Computación 2</p>
+                <small class="text-muted">Desarrollado con fines educativos</small>
+            </footer>
+        </div>
+
+
+        <!-- ════════════════════════════════════════════════════
+             APLICATIVO DE BÚSQUEDAS EXTERNAS
+        ════════════════════════════════════════════════════ -->
+        <div id="app-externas" class="app-container" style="display:none;">
+        <button id="volver-submenu-ext" class="btn back-to-menu text-white">
+            ← Volver al menú de búsquedas
+        </button>
+
+        <div class="app-header">
+            <h1>Búsquedas Externas</h1>
+            <p class="lead mb-0">La búsqueda externa opera sobre <strong>archivos en disco</strong> divididos en
+                <strong>bloques de registros</strong>. La unidad de costo es la <strong>lectura de bloque</strong>
+                (no la comparación individual), ya que acceder al disco es miles de veces más lento que la RAM.</p>
+        </div>
+
+        <ul class="nav nav-tabs" id="extTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="ext-seq-tab"
+                    data-bs-toggle="tab" data-bs-target="#ext-sequential"
+                    type="button" role="tab">Secuencial</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ext-bin-tab"
+                    data-bs-toggle="tab" data-bs-target="#ext-binary"
+                    type="button" role="tab">Binaria</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ext-hash-tab" data-bs-toggle="tab" data-bs-target="#ext-hash" type="button" role="tab">Hash</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="extTabsContent">
+
+            <!-- Pestaña Secuencial -->
+            <div class="tab-pane fade show active" id="ext-sequential" role="tabpanel">
+                <div class="row g-3 mt-1">
+
+                    <!-- Columna izquierda: controles -->
+                    <div class="col-lg-4 col-md-5">
+                        <div class="section">
+                            <h2>Configuración</h2>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Claves por bloque:</label>
+                                <div class="d-flex gap-2">
+                                    <input type="number" id="extSeqBlockSize" min="2" max="10" value="4"
+                                        class="form-control form-control-lg">
+                                    <button id="extSeqApplyBlockBtn" class="btn btn-secondary">Aplicar</button>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Rango (cantidad de claves):</label>
+                                <input type="number" id="extSeqRange" min="1" value="10"
+                                    class="form-control form-control-lg" placeholder="Ej: 20">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Dígitos por clave:</label>
+                                <input type="number" id="extSeqDigits" min="1" max="10" value="3"
+                                    class="form-control form-control-lg" placeholder="Ej: 3">
+                            </div>
+
+                            <hr>
+
+                            <label class="form-label fw-bold">Clave:</label>
+                            <div class="d-flex gap-2 mb-2">
+                                <input type="number" id="extSeqKeyVal" class="form-control form-control-lg">
+                                <button id="extSeqInsertBtn" class="btn btn-success">Insertar</button>
+                            </div>
+                            <div class="d-flex gap-2 mb-1">
+                                <button id="extSeqSearchBtn" class="search-btn flex-fill">Buscar</button>
+                                <button id="extSeqRemoveBtn" class="btn-delete-char flex-fill">Eliminar</button>
+                            </div>
+
+                            <hr>
+
+                            <label class="form-label fw-bold">Acciones</label>
+                            <button id="extSeqSaveBtn"    class="btn-save-array w-100 mt-2">Guardar archivo (PDF)</button>
+                            <button id="extSeqRecoverBtn" class="btn-recover-array w-100 mt-2">Recuperar archivo</button>
+                            <button id="extSeqPrintBtn"   class="btn-print-array w-100 mt-2">Imprimir</button>
+                            <input type="file" id="extSeqPdfInput" accept=".pdf" style="display:none;">
+                            <button id="extSeqResetBtn"   class="reset-btn w-100 mt-2">Reiniciar archivo</button>
+
+                            <!-- Resultado de búsqueda — debajo de acciones -->
+                            <div class="mt-3" id="extSeqStepInfo" style="display:none;">
+                                <hr>
+                                <h3>Resultado de búsqueda</h3>
+                                <p id="extSeqStepDesc" class="mb-2"></p>
+                                <div class="d-flex gap-4">
+                                    <div>
+                                        <strong>Bloques leídos:</strong>
+                                        <span id="extSeqBlockReads" class="badge bg-primary ms-1">0</span>
+                                    </div>
+                                    <div>
+                                        <strong>Comparaciones:</strong>
+                                        <span id="extSeqComparisons" class="badge bg-primary ms-1">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /col izquierda -->
+
+                    <!-- Columna derecha: bloques -->
+                    <div class="col-lg-8 col-md-7">
+                        <div class="section">
+                            <h2>Archivo en disco — Vista de bloques</h2>
+                            <div id="extSeqBlocksContainer" class="ext-blocks-wrapper"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /tab secuencial -->
+
+            <!-- Pestaña Binaria -->
+            <div class="tab-pane fade" id="ext-binary" role="tabpanel">
+                <div class="row g-3 mt-1">
+
+                    <!-- Columna izquierda: controles -->
+                    <div class="col-lg-4 col-md-5">
+                        <div class="section">
+                            <h2>Configuración</h2>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Claves por bloque:</label>
+                                <div class="d-flex gap-2">
+                                    <input type="number" id="extBinBlockSize" min="2" max="10" value="4"
+                                        class="form-control form-control-lg">
+                                    <button id="extBinApplyBlockBtn" class="btn btn-secondary">Aplicar</button>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Rango (cantidad de claves):</label>
+                                <input type="number" id="extBinRange" min="1" value="10"
+                                    class="form-control form-control-lg" placeholder="Ej: 20">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Dígitos por clave:</label>
+                                <input type="number" id="extBinDigits" min="1" max="10" value="3"
+                                    class="form-control form-control-lg" placeholder="Ej: 3">
+
+                            </div>
+
+                            <hr>
+
+                            <label class="form-label fw-bold">Clave:</label>
+                            <div class="d-flex gap-2 mb-2">
+                                <input type="number" id="extBinKeyVal" class="form-control form-control-lg">
+                                <button id="extBinInsertBtn" class="btn btn-success">Insertar</button>
+                            </div>
+                            <div class="d-flex gap-2 mb-1">
+                                <button id="extBinSearchBtn" class="search-btn flex-fill">Buscar</button>
+                                <button id="extBinRemoveBtn" class="btn-delete-char flex-fill">Eliminar</button>
+                            </div>
+
+                            <hr>
+
+                            <label class="form-label fw-bold">Acciones</label>
+                            <button id="extBinSaveBtn"    class="btn-save-array w-100 mt-2">Guardar archivo (PDF)</button>
+                            <button id="extBinRecoverBtn" class="btn-recover-array w-100 mt-2">Recuperar archivo</button>
+                            <button id="extBinPrintBtn"   class="btn-print-array w-100 mt-2">Imprimir</button>
+                            <input type="file" id="extBinPdfInput" accept=".pdf" style="display:none;">
+                            <button id="extBinResetBtn"   class="reset-btn w-100 mt-2">Reiniciar archivo</button>
+
+                            <!-- Resultado de búsqueda -->
+                            <div class="mt-3" id="extBinStepInfo" style="display:none;">
+                                <hr>
+                                <h3>Resultado de búsqueda</h3>
+                                <p id="extBinStepDesc" class="mb-2"></p>
+                                <div class="d-flex gap-4">
+                                    <div>
+                                        <strong>Bloques leídos:</strong>
+                                        <span id="extBinBlockReads" class="badge bg-primary ms-1">0</span>
+                                    </div>
+                                    <div>
+                                        <strong>Comparaciones:</strong>
+                                        <span id="extBinComparisons" class="badge bg-primary ms-1">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!-- /col izquierda -->
+
+                    <!-- Columna derecha: bloques -->
+                    <div class="col-lg-8 col-md-7">
+                        <div class="section">
+                            <h2>Archivo en disco — Vista de bloques</h2>
+                            <div id="extBinBlocksContainer" class="ext-blocks-wrapper"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /tab binaria -->
+            <!-- Pestaña Hash Externa -->
+            <div class="tab-pane fade" id="ext-hash" role="tabpanel">
+                <div class="row g-3 mt-1">
+                    <div class="col-lg-4 col-md-5">
+                        <div class="section">
+                            <h2>Configuración Hash</h2>
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Número de bloques:</label>
+                                <input type="number" id="extHashNumBlocks" min="1" max="50" value="5" class="form-control form-control-lg">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Claves por bloque:</label>
+                                <input type="number" id="extHashBlockSize" min="1" max="10" value="4" class="form-control form-control-lg">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Función hash:</label>
+                                <select id="extHashFunction" class="form-select form-select-lg">
+                                    <option value="division">División</option>
+                                    <option value="multiplication">Multiplicación</option>
+                                    <option value="folding">Plegamiento</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Resolución de colisiones:</label>
+                                <select id="extHashCollision" class="form-select form-select-lg">
+                                    <option value="chaining">Encadenamiento (overflow)</option>
+                                    <option value="linearProbing">Sondeo lineal entre bloques</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label fw-bold">Dígitos por clave:</label>
+                                <input type="number" id="extHashDigits" min="1" max="10" value="3" class="form-control form-control-lg">
+                            </div>
+                            <button id="extHashApplyConfig" class="btn btn-secondary w-100 mb-3">Aplicar configuración</button>
+                            <hr>
+                            <label class="form-label fw-bold">Clave:</label>
+                            <div class="d-flex gap-2 mb-2">
+                                <input type="number" id="extHashKeyVal" class="form-control form-control-lg">
+                                <button id="extHashInsertBtn" class="btn btn-success">Insertar</button>
+                            </div>
+                            <div class="d-flex gap-2 mb-1">
+                                <button id="extHashSearchBtn" class="search-btn flex-fill">Buscar</button>
+                                <button id="extHashRemoveBtn" class="btn-delete-char flex-fill">Eliminar</button>
+                            </div>
+                            <hr>
+                            <label class="form-label fw-bold">Acciones</label>
+                            <button id="extHashSaveBtn" class="btn-save-array w-100 mt-2">Guardar archivo (PDF)</button>
+                            <button id="extHashPrintBtn" class="btn-print-array w-100 mt-2">Imprimir</button>
+                            <button id="extHashResetBtn" class="reset-btn w-100 mt-2">Reiniciar archivo</button>
+                            <div class="mt-3" id="extHashStepInfo" style="display:none;">
+                                <hr>
+                                <h3>Resultado de búsqueda</h3>
+                                <p id="extHashStepDesc" class="mb-2"></p>
+                                <div class="d-flex gap-4">
+                                    <div><strong>Bloques leídos:</strong> <span id="extHashBlockReads" class="badge bg-primary ms-1">0</span></div>
+                                    <div><strong>Comparaciones:</strong> <span id="extHashComparisons" class="badge bg-primary ms-1">0</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-7">
+                        <div class="section">
+                            <h2>Archivo en disco — Organización Hash</h2>
+                            <div id="extHashBlocksContainer" class="ext-blocks-wrapper"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /tab-content -->
+
+        <footer class="text-center mt-5 pt-4 border-top">
+            <p class="text-muted mb-0">Aplicativo - Ciencias de la Computación 2</p>
+            <small class="text-muted">Desarrollado con fines educativos</small>
+        </footer>
+        </div><!-- /app-externas -->
+
+        <!-- Aplicativo de Grafos -->
+        <div id="app-grafos" class="app-container" style="display: none;">
+            <button id="volver-submenu-grafos" class="btn back-to-menu text-white">
+                ← Volver al menú de grafos
+            </button>
+            <div class="app-header">
+                <h1>Operaciones con Grafos</h1>
+                <p class="lead mb-0">Realiza diferentes operaciones entre grafos.</p>
+            </div>
+
+            <div class="row g-3">
+                <!-- Menú lateral izquierdo: editor y operaciones -->
+                <div class="col-md-3">
+                    <!-- Grafo actual: edición compacta -->
+                    <div class="section">
+                        <h5 class="section-title-sm">Editor del Grafo Actual</h5>
+
+                        <p class="st-label">Vértices</p>
+                        <input type="text" id="graphVertexInput" class="form-control form-control-sm mb-1" placeholder="Ej: A  o  A, B, C">
+                        <div class="d-flex gap-1 mb-2">
+                            <button id="graphAddVertexBtn" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                            <button id="graphRemoveVertexBtn" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                        </div>
+
+                        <p class="st-label">Aristas</p>
+                        <div class="row g-1 mb-1">
+                            <div class="col-6">
+                                <input type="text" id="graphEdgeFrom" class="form-control form-control-sm" placeholder="Desde">
+                            </div>
+                            <div class="col-6">
+                                <input type="text" id="graphEdgeTo" class="form-control form-control-sm" placeholder="Hasta">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-1 mb-2">
+                            <button id="graphAddEdgeBtn" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                            <button id="graphRemoveEdgeBtn" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                        </div>
+
+                        <div id="graphSetRepresentation" class="st-set-box st-set-box-sm">
+                            <div class="st-set-line"><span class="st-set-t">G</span> = (S,A)</div>
+                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span id="graphSetS">—</span> }</div>
+                            <div class="st-set-line"><span class="st-set-a">A</span> = { <span id="graphSetA">—</span> }</div>
+                        </div>
+
+                        <button id="graphClearBtn" class="btn btn-danger btn-sm w-100 mt-2">Limpiar grafo</button>
+
+                        <hr class="my-2">
+                        <h6 class="section-title-sm">Cargar ejemplo</h6>
+                        <select id="graphExampleSelect" class="form-select form-select-sm mb-1">
+                            <option value="empty">Vacío</option>
+                            <option value="complete3">Completo K3</option>
+                            <option value="complete5">Completo K5</option>
+                            <option value="cycle4">Ciclo C4</option>
+                            <option value="cycle6">Ciclo C6</option>
+                        </select>
+                        <button id="graphLoadExampleBtn" class="btn btn-secondary btn-sm w-100">Cargar ejemplo</button>
+                    </div>
+
+                    <!-- Grafo auxiliar -->
+                    <div class="section">
+                        <h5 class="section-title-sm">Editor del Grafo Auxiliar</h5>
+
+                        <p class="st-label">Vértices</p>
+                        <input type="text" id="graphAuxVertexInput" class="form-control form-control-sm mb-1" placeholder="Ej: X  o  X, Y, Z">
+                        <div class="d-flex gap-1 mb-2">
+                            <button id="graphAuxAddVertexBtn" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                            <button id="graphAuxRemoveVertexBtn" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                        </div>
+
+                        <p class="st-label">Aristas</p>
+                        <div class="row g-1 mb-1">
+                            <div class="col-6">
+                                <input type="text" id="graphAuxEdgeFrom" class="form-control form-control-sm" placeholder="Desde">
+                            </div>
+                            <div class="col-6">
+                                <input type="text" id="graphAuxEdgeTo" class="form-control form-control-sm" placeholder="Hasta">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-1 mb-2">
+                            <button id="graphAuxAddEdgeBtn" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                            <button id="graphAuxRemoveEdgeBtn" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                        </div>
+
+                        <div id="graphAuxSetRepresentation" class="st-set-box st-set-box-sm">
+                            <div class="st-set-line"><span class="st-set-t">G</span> = (S, A)</div>
+                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span id="graphAuxSetS">—</span> }</div>
+                            <div class="st-set-line"><span class="st-set-a">A</span> = { <span id="graphAuxSetA">—</span> }</div>
+                        </div>
+
+                        <button id="graphClearAuxBtn" class="btn btn-danger btn-sm w-100 mt-2">Limpiar auxiliar</button>
+                    </div>
+
+                    <!-- Operaciones binarias (con el auxiliar) -->
+                    <div class="section">
+                        <h3>Operaciones con el Auxiliar</h3>
+                        <div class="d-grid gap-2">
+                            <button id="graphUnionBtn" class="btn btn-primary">Unión</button>
+                            <button id="graphIntersectionBtn" class="btn btn-primary">Intersección</button>
+                            <button id="graphRingSumBtn" class="btn btn-primary">Suma anillo (Δ)</button>
+                            <button id="graphSumBtn" class="btn btn-primary">Suma disjunta</button>
+                            <button id="graphCartesianBtn" class="btn btn-primary">Producto cartesiano</button>
+                            <button id="graphTensorBtn" class="btn btn-primary">Producto tensorial</button>
+                            <button id="graphCompositionBtn" class="btn btn-primary">Composición</button>
+                        </div>
+                    </div>
+
+                    <!-- Operaciones unarias y transformaciones -->
+                    <div class="section">
+                        <h3>Transformaciones</h3>
+                        <div class="d-grid gap-2">
+                            <button id="graphComplementBtn" class="btn btn-secondary">Complemento</button>
+                            <div class="input-group mt-2">
+                                <input type="text" id="graphFusionU" class="form-control" placeholder="Vértice u">
+                                <input type="text" id="graphFusionV" class="form-control" placeholder="Vértice v">
+                                <button id="graphFusionBtn" class="btn btn-primary">Fusionar u y v</button>
+                            </div>
+                            <div class="input-group mt-2">
+                                <input type="text" id="graphContractU" class="form-control" placeholder="Arista (u)">
+                                <input type="text" id="graphContractV" class="form-control" placeholder="Arista (v)">
+                                <button id="graphContractBtn" class="btn btn-primary">Contraer arista u-v</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna derecha: visualizaciones -->
+                <div class="col-md-9">
+                    <div class="section">
+                        <h6 class="st-graph-title" style="color:var(--primary-color);border-color:var(--primary-color)">Grafo Actual</h6>
+                        <div id="graphContainer" class="graph-container"></div>
+                    </div>
+
+                    <div class="section">
+                        <h6 class="st-graph-title" style="color:#1565c0;border-color:#1565c0">Grafo Auxiliar</h6>
+                        <div id="graphAuxContainer" class="graph-container graph-aux-container"></div>
+                    </div>
+
+                    <div class="section">
+                        <h6 id="graphResultTitle" class="st-graph-title" style="color:#6a1b9a;border-color:#6a1b9a">Resultado de Operación</h6>
+                        <div id="graphResultContainer" class="graph-container"></div>
+                        <div id="graphResultSetRepresentation" class="st-set-box st-set-box-sm mt-2">
+                            <div class="st-set-line"><span class="st-set-t">R</span> = (S, A)</div>
+                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span id="graphResultSetS">—</span> }</div>
+                            <div class="st-set-line"><span class="st-set-a">A</span> = { <span id="graphResultSetA">—</span> }</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════
+             APLICATIVO — ÁRBOLES DE GRAFOS
+        ══════════════════════════════════════════════════ -->
+        <div id="app-arboles" class="app-container" style="display:none;">
+            <button id="volver-submenu-arboles" class="btn back-to-menu text-white">
+                ← Volver al menú de grafos
+            </button>
+            <div class="app-header">
+                <h1>Árboles de Grafos</h1>
+                <p class="lead mb-0">Árboles de expansión y distancias entre grafos.</p>
+            </div>
+
+            <!-- Pestañas -->
+            <ul class="nav nav-tabs" id="arbolesMethodTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="centro-tab" data-bs-toggle="tab"
+                        data-bs-target="#centro" type="button" role="tab">
+                        Centro o Bicentro
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="expansion-tab" data-bs-toggle="tab"
+                        data-bs-target="#expansion" type="button" role="tab">
+                        Árboles de Expansión
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="distancia-tab" data-bs-toggle="tab"
+                        data-bs-target="#distancia" type="button" role="tab">
+                        Distancia entre Árboles
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="arbolesTabContent">
+
+                <!-- ── PESTAÑA: Centro o Bicentro ── -->
+                <div class="tab-pane fade" id="centro" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="section">
+                                <h5 class="section-title-sm">Editor del Grafo</h5>
+
+                                <p class="st-label">Vértices</p>
+                                <input type="text" id="cbVertexInput" class="form-control form-control-sm mb-1"
+                                    placeholder="Ej: A  o  A, B, C">
+                                <div class="d-flex gap-1 mb-2">
+                                    <button id="cbAddVertexBtn" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                                    <button id="cbRemoveVertexBtn" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                                </div>
+
+                                <p class="st-label">Aristas</p>
+                                <div class="row g-1 mb-1">
+                                    <div class="col-6">
+                                        <input type="text" id="cbEdgeFrom" class="form-control form-control-sm" placeholder="Desde">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="text" id="cbEdgeTo" class="form-control form-control-sm" placeholder="Hasta">
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-1 mb-2">
+                                    <button id="cbAddEdgeBtn" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                                    <button id="cbRemoveEdgeBtn" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                                </div>
+
+                                <div id="cbSetRepresentation" class="st-set-box st-set-box-sm">
+                                    <div class="st-set-line"><span class="st-set-t">T</span> = (V, E)</div>
+                                    <div class="st-set-line"><span class="st-set-s">V</span> = { <span id="cbSetV">—</span> }</div>
+                                    <div class="st-set-line"><span class="st-set-a">E</span> = { <span id="cbSetE">—</span> }</div>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <button id="cbCalculateBtn" class="btn btn-success btn-sm w-100 mb-1">
+                                    Calcular Centro/Bicentro
+                                </button>
+                                <button id="cbResetBtn" class="btn btn-danger btn-sm w-100">
+                                    Limpiar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-9">
+                            <div class="section mb-2">
+                                <h6 class="st-graph-title" style="color:var(--primary-color);border-color:var(--primary-color)">
+                                    Grafo Original
+                                </h6>
+                                <div id="cbMainContainer" style="height:240px;border-radius:8px;overflow:hidden;"></div>
+                            </div>
+
+                            <div class="section mb-2">
+                                <h6 class="st-graph-title" style="color:#6a1b9a;border-color:#6a1b9a">
+                                    Iteraciones
+                                </h6>
+                                <div id="cbProcessContainer" class="cb-process-list">
+                                    <div class="text-muted text-center py-4">Aquí se mostrarán las iteraciones de poda de hojas.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── PESTAÑA: Árboles de Expansión ── -->
+                <div class="tab-pane fade show active" id="expansion" role="tabpanel">
+                    <div class="row g-3">
+
+                        <!-- Panel izquierdo: controles -->
+                        <div class="col-md-3">
+                            <div class="section">
+                                <h5 class="section-title-sm">Editor del Grafo</h5>
+
+                                <!-- Vértices -->
+                                <p class="st-label">Vértices</p>
+                                <input type="text" id="stVertexInput" class="form-control form-control-sm mb-1"
+                                    placeholder="Ej: A  o  A, B, C">
+                                <div class="d-flex gap-1 mb-2">
+                                    <button id="stAddVertexBtn" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                                    <button id="stRemoveVertexBtn" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <!-- Aristas -->
+                                <p class="st-label">Aristas</p>
+                                <div class="row g-1 mb-1">
+                                    <div class="col-4">
+                                        <input type="text" id="stEdgeFrom" class="form-control form-control-sm" placeholder="Desde">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" id="stEdgeTo" class="form-control form-control-sm" placeholder="Hasta">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" id="stEdgeWeight" class="form-control form-control-sm" placeholder="Peso">
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-1 mb-2">
+                                    <button id="stAddEdgeBtn" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                                    <button id="stRemoveEdgeBtn" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <!-- Representación T = (S, A) -->
+                                <div id="stSetRepresentation" class="st-set-box">
+                                    <div class="st-set-line"><span class="st-set-t">T</span> = (S, A)</div>
+                                    <div class="st-set-line"><span class="st-set-s">S</span> = { <span id="stSetS">—</span> }</div>
+                                    <div class="st-set-line"><span class="st-set-a">A</span> = { <span id="stSetA">—</span> }</div>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <!-- Acciones -->
+                                <button id="stCalculateBtn" class="btn btn-success btn-sm w-100 mb-1">
+                                    Calcular Árboles
+                                </button>
+                                <button id="stResetBtn" class="btn btn-danger btn-sm w-100">
+                                    Limpiar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Panel derecho: visualizaciones -->
+                        <div class="col-md-9">
+
+                            <!-- Grafo original -->
+                            <div class="section mb-2">
+                                <h6 class="st-graph-title" style="color:var(--primary-color);border-color:var(--primary-color)">
+                                    Grafo Original
+                                </h6>
+                                <div id="stMainContainer" style="height:250px;border-radius:8px;overflow:hidden;"></div>
+                            </div>
+
+                            <!-- Resultados lado a lado -->
+                            <div class="row g-2">
+                                <!-- Mínimo -->
+                                <div class="col-md-6">
+                                    <div class="section">
+                                        <h6 class="st-graph-title" style="color:#2e7d32;border-color:#2e7d32">
+                                            Árbol de Expansión Mínima
+                                        </h6>
+                                        <div id="stMinContainer" style="height:235px;border-radius:8px;overflow:hidden;"></div>
+                                        <div id="stMinInfo" class="st-result-info">
+                                            <span class="text-muted" style="font-size:0.8rem">—</span>
+                                        </div>
+                                        <!-- Representación T_min = (S, A) -->
+                                        <div id="stMinSetRep" class="st-set-box st-set-box-sm mt-2" style="display:none">
+                                            <div class="st-set-line"><span class="st-set-t">T<sub>min</sub></span> = (S, A)</div>
+                                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span id="stMinSetS">—</span> }</div>
+                                            <div class="st-set-line"><span class="st-set-a">A</span> = { <span id="stMinSetA">—</span> }</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Máximo -->
+                                <div class="col-md-6">
+                                    <div class="section">
+                                        <h6 class="st-graph-title" style="color:#b71c1c;border-color:#b71c1c">
+                                            Árbol de Expansión Máxima
+                                        </h6>
+                                        <div id="stMaxContainer" style="height:235px;border-radius:8px;overflow:hidden;"></div>
+                                        <div id="stMaxInfo" class="st-result-info">
+                                            <span class="text-muted" style="font-size:0.8rem">—</span>
+                                        </div>
+                                        <!-- Representación T_max = (S, A) -->
+                                        <div id="stMaxSetRep" class="st-set-box st-set-box-sm mt-2" style="display:none">
+                                            <div class="st-set-line"><span class="st-set-t">T<sub>max</sub></span> = (S, A)</div>
+                                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span id="stMaxSetS">—</span> }</div>
+                                            <div class="st-set-line"><span class="st-set-a">A</span> = { <span id="stMaxSetA">—</span> }</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── PESTAÑA: Distancia entre Árboles ── -->
+                <div class="tab-pane fade" id="distancia" role="tabpanel">
+                    <div class="row g-3">
+
+                        <!-- Panel izquierdo: controles -->
+                        <div class="col-md-3">
+                            <div class="section">
+                                <h5 class="section-title-sm">Editor del Grafo A</h5>
+
+                                <p class="st-label">Vértices A</p>
+                                <input type="text" id="tdVertexInputA" class="form-control form-control-sm mb-1"
+                                    placeholder="Ej: A  o  A, B, C">
+                                <div class="d-flex gap-1 mb-2">
+                                    <button id="tdAddVertexBtnA" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                                    <button id="tdRemoveVertexBtnA" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                                </div>
+
+                                <p class="st-label">Aristas A</p>
+                                <div class="row g-1 mb-1">
+                                    <div class="col-4">
+                                        <input type="text" id="tdEdgeFromA" class="form-control form-control-sm" placeholder="Desde">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" id="tdEdgeToA" class="form-control form-control-sm" placeholder="Hasta">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" id="tdEdgeWeightA" class="form-control form-control-sm" placeholder="Peso">
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-1 mb-2">
+                                    <button id="tdAddEdgeBtnA" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                                    <button id="tdRemoveEdgeBtnA" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                                </div>
+
+                                <div id="tdInputSetRepresentationA" class="st-set-box st-set-box-sm">
+                                    <div class="st-set-line"><span class="st-set-t">A</span> = (S, E)</div>
+                                    <div class="st-set-line"><span class="st-set-s">S</span> = { <span id="tdInputSetAS">—</span> }</div>
+                                    <div class="st-set-line"><span class="st-set-a">E</span> = { <span id="tdInputSetAA">—</span> }</div>
+                                </div>
+
+                                <hr class="my-3">
+
+                                <h5 class="section-title-sm">Editor del Grafo B</h5>
+
+                                <p class="st-label">Vértices B</p>
+                                <input type="text" id="tdVertexInputB" class="form-control form-control-sm mb-1"
+                                    placeholder="Ej: A  o  A, B, C">
+                                <div class="d-flex gap-1 mb-2">
+                                    <button id="tdAddVertexBtnB" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                                    <button id="tdRemoveVertexBtnB" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                                </div>
+
+                                <p class="st-label">Aristas B</p>
+                                <div class="row g-1 mb-1">
+                                    <div class="col-4">
+                                        <input type="text" id="tdEdgeFromB" class="form-control form-control-sm" placeholder="Desde">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" id="tdEdgeToB" class="form-control form-control-sm" placeholder="Hasta">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" id="tdEdgeWeightB" class="form-control form-control-sm" placeholder="Peso">
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-1 mb-2">
+                                    <button id="tdAddEdgeBtnB" class="btn btn-primary btn-sm flex-fill">Agregar</button>
+                                    <button id="tdRemoveEdgeBtnB" class="btn btn-danger btn-sm flex-fill">Eliminar</button>
+                                </div>
+
+                                <div id="tdInputSetRepresentationB" class="st-set-box st-set-box-sm">
+                                    <div class="st-set-line"><span class="st-set-t">B</span> = (S, E)</div>
+                                    <div class="st-set-line"><span class="st-set-s">S</span> = { <span id="tdInputSetBS">—</span> }</div>
+                                    <div class="st-set-line"><span class="st-set-a">E</span> = { <span id="tdInputSetBA">—</span> }</div>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <button id="tdCalculateBtn" class="btn btn-success btn-sm w-100 mb-1">
+                                    Calcular Distancia
+                                </button>
+                                <button id="tdResetBtn" class="btn btn-danger btn-sm w-100">
+                                    Limpiar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Panel derecho: árboles y resultado -->
+                        <div class="col-md-9">
+
+                            <!-- Grafos base: A y B -->
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="section">
+                                        <h6 class="st-graph-title" style="color:#2e7d32;border-color:#2e7d32">
+                                            Grafo A
+                                        </h6>
+                                <div id="tdAContainer" style="height:250px;border-radius:8px;overflow:hidden;"></div>
+                                        <div id="tdInfoA" class="st-result-info">
+                                            <span class="text-muted" style="font-size:0.8rem">—</span>
+                                        </div>
+                                        <div id="tdSetA" class="st-set-box st-set-box-sm mt-2" style="display:none">
+                                            <div class="st-set-line"><span class="st-set-t">A</span> = (S, E)</div>
+                                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span data-role="set-s">—</span> }</div>
+                                            <div class="st-set-line"><span class="st-set-a">E</span> = { <span data-role="set-a">—</span> }</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="section">
+                                        <h6 class="st-graph-title" style="color:#1565c0;border-color:#1565c0">
+                                            Grafo B
+                                        </h6>
+                                        <div id="tdBContainer" style="height:250px;border-radius:8px;overflow:hidden;"></div>
+                                        <div id="tdInfoB" class="st-result-info">
+                                            <span class="text-muted" style="font-size:0.8rem">—</span>
+                                        </div>
+                                        <div id="tdSetB" class="st-set-box st-set-box-sm mt-2" style="display:none">
+                                            <div class="st-set-line"><span class="st-set-t">B</span> = (S, E)</div>
+                                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span data-role="set-s">—</span> }</div>
+                                            <div class="st-set-line"><span class="st-set-a">E</span> = { <span data-role="set-a">—</span> }</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Resultados: unión e intersección -->
+                            <div class="row g-2 mt-1">
+                                <div class="col-md-6">
+                                    <div class="section">
+                                        <h6 class="st-graph-title" style="color:#ef6c00;border-color:#ef6c00">
+                                            Grafo C: A ∪ B
+                                        </h6>
+                                        <div id="tdCContainer" style="height:250px;border-radius:8px;overflow:hidden;"></div>
+                                        <div id="tdInfoC" class="st-result-info">
+                                            <span class="text-muted" style="font-size:0.8rem">—</span>
+                                        </div>
+                                        <div id="tdSetC" class="st-set-box st-set-box-sm mt-2" style="display:none">
+                                            <div class="st-set-line"><span class="st-set-t">C</span> = (S, E)</div>
+                                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span data-role="set-s">—</span> }</div>
+                                            <div class="st-set-line"><span class="st-set-a">E</span> = { <span data-role="set-a">—</span> }</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="section">
+                                        <h6 class="st-graph-title" style="color:#6a1b9a;border-color:#6a1b9a">
+                                            Grafo D: A ∩ B
+                                        </h6>
+                                        <div id="tdDContainer" style="height:250px;border-radius:8px;overflow:hidden;"></div>
+                                        <div id="tdInfoD" class="st-result-info">
+                                            <span class="text-muted" style="font-size:0.8rem">—</span>
+                                        </div>
+                                        <div id="tdSetD" class="st-set-box st-set-box-sm mt-2" style="display:none">
+                                            <div class="st-set-line"><span class="st-set-t">D</span> = (S, E)</div>
+                                            <div class="st-set-line"><span class="st-set-s">S</span> = { <span data-role="set-s">—</span> }</div>
+                                            <div class="st-set-line"><span class="st-set-a">E</span> = { <span data-role="set-a">—</span> }</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section mt-2 td-distance-card" id="tdDistanceResultCard" style="display:none">
+                                <h6 class="st-graph-title mb-2" style="color:var(--primary-color);border-color:var(--primary-color)">
+                                    Distancia entre Árboles
+                                </h6>
+                                <p class="mb-1"><strong>Fórmula:</strong> d(A,B) = (|A∪B| - |A∩B|) / 2</p>
+                                <p id="tdDistanceDetail" class="mb-1 td-distance-detail">—</p>
+                                <div class="td-distance-value-wrap">
+                                    <span class="td-distance-label">Distancia:</span>
+                                    <span id="tdDistanceValue" class="td-distance-value">—</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /tab-content -->
+
+            <footer class="text-center mt-5 pt-4 border-top">
+                <p class="text-muted mb-0">Aplicativo - Ciencias de la Computación 2</p>
+                <small class="text-muted">Desarrollado con fines educativos</small>
+            </footer>
+        </div><!-- /app-arboles -->
+
+    </div><!-- /main-container -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/models/ArrayModel.js"></script>
+    <script src="js/models/HashModel.js"></script>
+    <script src="js/models/DigitalTreeModel.js"></script>
+    <script src="js/models/TriesModel.js"></script>
+    <script src="js/models/ResiduosMultipleModel.js"></script>
+    <script src="js/models/HuffmanModel.js"></script>
+    <script src="js/views/ArrayView.js"></script>
+    <script src="js/views/HashView.js"></script>
+    <script src="js/views/DigitalTreeView.js"></script>
+    <script src="js/views/TriesView.js"></script>
+    <script src="js/views/ResiduosMultipleView.js"></script>
+    <script src="js/views/HuffmanViews.js"></script>
+    <script src="js/controllers/SearchController.js"></script>
+    <script src="js/controllers/HashController.js"></script>
+    <script src="js/controllers/DigitalTreeController.js"></script>
+    <script src="js/controllers/TriesController.js"></script>
+    <script src="js/controllers/ResiduosMultipleController.js"></script>
+    <script src="js/controllers/HuffmanController.js"></script>
+    <script src="js/models/ExternalSeqModel.js"></script>
+    <script src="js/views/ExternalSeqView.js"></script>
+    <script src="js/controllers/ExternalSeqController.js"></script>
+    <script src="js/models/ExternalBinModel.js"></script>
+    <script src="js/views/ExternalBinView.js"></script>
+    <script src="js/controllers/ExternalBinController.js"></script>
+    <script src="js/models/ExternalHashModel.js"></script>
+    <script src="js/views/ExternalHashView.js"></script>
+    <script src="js/controllers/ExternalHashController.js"></script>
+    <script src="js/models/GraphModel.js"></script>
+    <script src="js/views/GraphView.js"></script>
+    <script src="js/controllers/GraphController.js"></script>
+    <script src="js/models/SpanningTreeModel.js"></script>
+    <script src="js/models/TreeDistanceModel.js"></script>
+    <script src="js/views/SpanningTreeView.js"></script>
+    <script src="js/controllers/SpanningTreeController.js"></script>
+    <script src="js/controllers/CenterBicentroController.js"></script>
+    <script src="js/controllers/TreeDistanceController.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
